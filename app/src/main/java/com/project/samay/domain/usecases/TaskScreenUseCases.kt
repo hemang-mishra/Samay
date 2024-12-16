@@ -2,6 +2,7 @@ package com.project.samay.domain.usecases
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.project.samay.SamayApplication
 import com.project.samay.data.model.DomainEntity
 import com.project.samay.data.model.TaskEntity
@@ -76,6 +77,7 @@ class TaskScreenUseCases(
             val newDomainEntity = domainEntity.copy(timeSpent = domainEntity.timeSpent + time)
             domainRepository.upsertDomain(newDomainEntity)
         }
+//        Log.i("Adding in calender", "$id ${taskEntity.taskName} $start $end")
         if (id != null)
             calenderRepository.addEvent(
                 context,
@@ -85,6 +87,8 @@ class TaskScreenUseCases(
                 start,
                 end
             )
+        else
+            Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()
 
         resetAfterGoalAchieved(target)
     }
