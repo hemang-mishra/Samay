@@ -31,7 +31,7 @@ fun NavigationDrawerContent(navController: NavController) {
                         }
 
                         NavigationDrawerItems.SETTINGS -> {
-
+                            navController.navigate(Destinations.SettingsScreen)
                         }
                     }
                 }

@@ -25,6 +25,8 @@ class MonitorViewModel(private val monitorAppsScreenUseCases: MonitorAppsScreenU
     private val _data = mutableStateOf(emptyMap<MonitoredApps, Long>())
     val data: State<Map<MonitoredApps, Long>> = _data
 
+    val appData = monitorAppsScreenUseCases.getData()
+
 
     init {
         getData()

@@ -13,11 +13,11 @@ class DomainScreenUseCases(
     }
     val allDomains = domainRepository.allDomains
 
-    suspend fun insertNewDomain(name: String, description: String, monthlyTarget: String, expectedPercent: Float){
+    suspend fun insertNewDomain(name: String, description: String, monthlyTarget: String, expectedPercent: Float, timeSpent: Long){
         val domainSize = allDomains.first().size+1
         val domainEntity = DomainEntity(
             id = 0,
-            timeSpent = 0,
+            timeSpent = timeSpent,
             rate = 0.0f,
             name = name,
             description = description,
@@ -30,9 +30,9 @@ class DomainScreenUseCases(
     }
 
     suspend fun updateDomainDetails(name: String, monthlyTarget: String,expectedPercent: Float,
-                                    oldDomainEntity: DomainEntity, description: String,
+                                    oldDomainEntity: DomainEntity, description: String, timeSpent: Long
                                     ){
-        val newDomainEntity = oldDomainEntity.copy(name = name, monthlyTarget = monthlyTarget, expectedPercentage = expectedPercent, description = description)
+        val newDomainEntity = oldDomainEntity.copy(name = name, monthlyTarget = monthlyTarget, timeSpent = timeSpent, expectedPercentage = expectedPercent, description = description)
         domainRepository.upsertDomain(newDomainEntity)
     }
 

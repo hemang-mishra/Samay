@@ -17,7 +17,7 @@
 //        var mapUsage = flowOf(emptyMap<MonitoredApps, Long>())
 
 
-        suspend fun getData(): Flow<Map<MonitoredApps, Long>> {
+        fun getData(): Flow<Map<MonitoredApps, Long>> {
             return flow {
                 val mapUsageVal = emptyMap<MonitoredApps, Long>().toMutableMap()
                 val usageStatsManager =
@@ -37,7 +37,7 @@
                             event.timeStamp
                     }
                 }
-                Log.i("UsageRepository", "Map Usage: $mapUsageVal")
+                Log.i("UsageRepository", "Map Usage: ${mapUsageVal.map { it.key to TimeUtils.convertMillisToString(it.value) }}")
                 emit(mapUsageVal.toMap())
             }
         }

@@ -36,7 +36,7 @@ class MonitorAppsScreenUseCases(private val usageRepository: UsageRepository, pr
 //        return Logic.formatInHrsAndMins(time)
 //    }
 
-    suspend fun getData() = usageRepository.getData()
+    fun getData() = usageRepository.getData()
 
     fun navigateToApp(packageName: String){
         usageRepository.navigateToApp(packageName)

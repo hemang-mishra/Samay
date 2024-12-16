@@ -57,8 +57,8 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases): V
         uiState.value = uiState.value.copy(selectedDomain = domainEntity)
     }
 
-    fun saveNewDomain(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String): Boolean{
-        if(!validateDetails(context, name, description, monthlyTarget, expectedPercent)){
+    fun saveNewDomain(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String, timeSpent: String): Boolean{
+        if(!validateDetails(context, name, description, monthlyTarget, expectedPercent, timeSpent)){
             return false
         }
         viewModelScope.launch {
@@ -66,17 +66,17 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases): V
                 name = name,
                 description = description,
                 monthlyTarget = monthlyTarget,
-                expectedPercent = expectedPercent.toFloat()
+                expectedPercent = expectedPercent.toFloat(),
+                timeSpent=timeSpent.toLong()
             )
         }
         return true
     }
 
-    fun updateDomain(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String,
-
+    fun updateDomain(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String, timeSpent: String
     ): Boolean{
         val oldDomain = uiState.value.selectedDomain ?: return false
-        if(!validateDetails(context, name, description, monthlyTarget, expectedPercent)){
+        if(!validateDetails(context, name, description, monthlyTarget, expectedPercent, timeSpent)){
             return false
         }
         viewModelScope.launch {
@@ -85,14 +85,15 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases): V
                 description = description,
                 monthlyTarget = monthlyTarget,
                 expectedPercent = expectedPercent.toFloat(),
-                oldDomainEntity = oldDomain
+                oldDomainEntity = oldDomain,
+                timeSpent = timeSpent.toLong()
             )
         }
         return true
     }
 
 
-    private fun validateDetails(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String): Boolean{
+    private fun validateDetails(context: Context, name: String, description: String, monthlyTarget: String, expectedPercent: String, timeSpent: String): Boolean{
         if(name.isEmpty()){
             showToast(context, "Name cannot be empty")
             return false
@@ -119,6 +120,11 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases): V
         }
         if(expectedPercent.toFloatOrNull() == null){
             showToast(context, "Expected percentage should be a number")
+            return false
+        }
+        if(timeSpent.toLongOrNull() == null)
+        {
+            showToast(context, "Time spent should be a number")
             return false
         }
         return true

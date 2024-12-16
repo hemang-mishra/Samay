@@ -9,4 +9,7 @@ sealed interface Destinations {
     @Serializable
     data object BackupScreen: Destinations
 
+    @Serializable
+    data object SettingsScreen: Destinations
+
 }

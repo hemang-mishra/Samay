@@ -5,11 +5,18 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.speech.tts.TextToSpeech
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,6 +39,7 @@ import com.project.samay.presentation.domains.UseDomainScreen
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.meditate.MeditationMusicScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
+import com.project.samay.presentation.settings.SettingsScreen
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
 import com.project.samay.presentation.tasks.NavTargetScreen
@@ -41,6 +49,7 @@ import com.project.samay.presentation.tasks.TaskViewModel
 import com.project.samay.presentation.tasks.UseTaskScreen
 import com.project.samay.ui.theme.SamayTheme
 import org.koin.android.ext.android.inject
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val usageViewModel by inject<MonitorViewModel>()
@@ -49,6 +58,7 @@ class MainActivity : ComponentActivity() {
     private val calendarViewModel by inject<CalendarViewModel>()
     private val meditateViewModel by inject<MeditateViewModel>()
     private val backupViewModel by inject<BackupScreenViewModel>()
+    private lateinit var tts: TextToSpeech
 
 
     private var isBound by mutableStateOf(false)
@@ -83,18 +93,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        super.onStart()
-//        Intent(
-//            this,
-//            StopwatchService::class.java,
-//        ).also { intent ->
-//            bindService(intent, connection, BIND_AUTO_CREATE)
-//        }
+        tts= TextToSpeech(this){status->
+            if(status == TextToSpeech.SUCCESS) {
+                tts.language = Locale.ENGLISH
+                tts.setPitch(1.3f)
+            }
 
-        //Audio service setup:
-//        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
-
-
+        }
         enableEdgeToEdge()
         setContent {
             if (isBound) {
@@ -158,7 +163,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<Destinations.BackupScreen> {
-                            BackupScreen(backupScreenViewModel = backupViewModel)
+//                            BackupScreen(backupScreenViewModel = backupViewModel)
+                            MyApp(tts)
+                        }
+
+                        composable<Destinations.SettingsScreen> {
+                            SettingsScreen(monitorViewModel = usageViewModel)
                         }
                     }
 
@@ -166,6 +176,26 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+    }
+
+    @Composable
+    fun MyApp(tts: TextToSpeech) {
+        var textToSpeak by remember { mutableStateOf("Hello, Jetpack Compose!") }
+
+        Column {
+            TextField(
+                value = textToSpeak,
+                onValueChange = { textToSpeak = it },
+                label = { Text("Enter text to speak") }
+            )
+            Button(onClick = { speakText(tts, textToSpeak) }) {
+                Text("Speak")
+            }
+        }
+    }
+
+    fun speakText(tts: TextToSpeech, text: String) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 
     override fun onStop() {
@@ -187,5 +217,10 @@ class MainActivity : ComponentActivity() {
 //        backUpRepository.backupDatabase(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        tts.stop()
+        tts.shutdown()
+    }
 
 }

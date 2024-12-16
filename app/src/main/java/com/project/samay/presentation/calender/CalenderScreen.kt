@@ -108,25 +108,26 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                             )
                         }
                     }
-                }
-                Column {
-                    Text(text = "Select Calender for adding events")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Current calender is: ${
-                            calendarViewModel.getCalenderAtIndex(
-                                selectedCalendarIndex
-                            )?.displayName ?: "None"
-                        }"
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedCard(
-                        onClick = {
-                            isSelectDialogueVisible = true
-                        },
-                        modifier = Modifier
-                    ) {
-                        Text(text = "Select Calender", modifier = Modifier.padding(16.dp))
+
+                    item {
+                        Text(text = "Select Calender for adding events")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Current calender is: ${
+                                calendarViewModel.getCalenderAtIndex(
+                                    selectedCalendarIndex
+                                )?.displayName ?: "None"
+                            }"
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedCard(
+                            onClick = {
+                                isSelectDialogueVisible = true
+                            },
+                            modifier = Modifier
+                        ) {
+                            Text(text = "Select Calender", modifier = Modifier.padding(16.dp))
+                        }
                     }
                 }
             }
@@ -266,18 +267,20 @@ fun CalenderDialogue(list: List<CalendarType>, onSelect: (CalendarType?) -> Unit
                 .clip(RoundedCornerShape(32.dp))
                 .padding(16.dp)
         ) {
-            Column {
-                list.forEach {
+            LazyColumn {
+                items(list.size) { index->
+                    val it = list[index]
                     Text(
-                        text = it.displayName,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
-                                onSelect(it)
-                            },
-                        style = MaterialTheme.typography.bodyMedium,
+                            text = it.displayName,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    onSelect(it)
+                                },
+                            style = MaterialTheme.typography.bodyMedium,
 
-                        )
+                            )
+
                 }
             }
         }

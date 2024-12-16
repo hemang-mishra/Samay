@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,14 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.project.samay.domain.model.MonitoredApps
 import com.project.samay.presentation.domains.BoldItalicText
+import com.project.samay.util.calculations.TimeUtils
 
 @Composable
 fun MonitorScreen(viewModel: MonitorViewModel) {
 //    val viewModel: MonitorViewModel = viewModel()
     val isEmergency by viewModel.isEmergency
     val isMonitored by viewModel.areAppsMonitored
-    val data by viewModel.data
-    Log.i("MonitorScreen", "isEmergency: $isEmergency, isMonitored: $isMonitored, data: $data")
+    val data by viewModel.appData.collectAsState(initial = emptyMap())
+    Log.i("MonitorScreen", "isEmergency: $isEmergency, isMonitored: $isMonitored, data: ${data.map { it.key to TimeUtils.convertMillisToString(it.value) }}")
     val coroutineScope = rememberCoroutineScope()
     Column {
         TopBarMonitor(viewModel = viewModel)
@@ -54,7 +56,7 @@ fun MonitorScreen(viewModel: MonitorViewModel) {
                     app = app,
                     progress = viewModel.getProgress(data[app] ?: 0),
                     activationTime = viewModel.getActivationTime(data[app] ?: 0),
-                    isActive = isEmergency || viewModel.getProgress(data[app] ?: 0) == 1f || (!isMonitored)
+                    isActive = isEmergency || viewModel.getProgress(data[app] ?: 0) == 1f
                 ) {
                     viewModel.navigateToApp(app.packageName)
                 }
@@ -111,10 +113,10 @@ fun TopBarMonitor(viewModel: MonitorViewModel) {
             .fillMaxHeight(0.3f)
             .padding(8.dp)
     ) {
-        Column(modifier = Modifier.align(Alignment.TopEnd)) {
-            BoldItalicText(text = "Emergency Mode")
-            Switch(checked = isEmergency, onCheckedChange = viewModel::toggleEmergency)
-        }
+//        Column(modifier = Modifier.align(Alignment.TopEnd)) {
+//            BoldItalicText(text = "Emergency Mode")
+//            Switch(checked = isEmergency, onCheckedChange = viewModel::toggleEmergency)
+//        }
         Text(text = "Monitor Apps", modifier = Modifier.align(Alignment.BottomStart),
             style = MaterialTheme.typography.headlineLarge)
     }
