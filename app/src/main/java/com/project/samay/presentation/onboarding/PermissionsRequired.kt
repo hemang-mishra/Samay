@@ -1,4 +1,4 @@
-package com.project.samay.domain.model
+package com.project.samay.presentation.onboarding
 
 import android.Manifest
 

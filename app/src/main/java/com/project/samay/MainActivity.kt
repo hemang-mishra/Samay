@@ -39,6 +39,7 @@ import com.project.samay.presentation.domains.UseDomainScreen
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.meditate.MeditationMusicScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
+import com.project.samay.presentation.onboarding.OnboardingViewModel
 import com.project.samay.presentation.settings.SettingsScreen
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private val calendarViewModel by inject<CalendarViewModel>()
     private val meditateViewModel by inject<MeditateViewModel>()
     private val backupViewModel by inject<BackupScreenViewModel>()
+    private val onboardingViewModel by inject<OnboardingViewModel>()
     private lateinit var tts: TextToSpeech
 
 
@@ -111,6 +113,9 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = NavHomeScreen
                     ) {
+                        composable<Destinations.OnboardingScreen> {
+
+                        }
                         composable<NavHomeScreen> {
                             HomeScreen(
                                 domainViewModel,

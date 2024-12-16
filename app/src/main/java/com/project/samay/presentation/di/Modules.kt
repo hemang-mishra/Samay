@@ -24,6 +24,8 @@ import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.focus.FocusViewModel
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.monitor.MonitorViewModel
+import com.project.samay.presentation.onboarding.OnboardingViewModel
+import com.project.samay.presentation.onboarding.PermissionsRequired
 import com.project.samay.presentation.tasks.TaskViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -73,4 +75,5 @@ val appModules = module {
     viewModel { MonitorViewModel(get())}
     viewModel {MeditateViewModel(get())}
     viewModel { BackupScreenViewModel(get())}
+    viewModel { OnboardingViewModel() }
 }
