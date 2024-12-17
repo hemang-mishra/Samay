@@ -67,8 +67,6 @@ class MainActivity : ComponentActivity() {
     private val meditateViewModel by inject<MeditateViewModel>()
     private val backupViewModel by inject<BackupScreenViewModel>()
     private val onboardingViewModel by inject<OnboardingViewModel>()
-//    private lateinit var tts: TextToSpeech
-
 
     private var isBound by mutableStateOf(false)
     private lateinit var stopwatchService: StopwatchService
@@ -93,23 +91,11 @@ class MainActivity : ComponentActivity() {
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
         Log.i("check", "On start")
-//        //Audio service setup:
-//        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
-//        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-//        controllerFuture.addListener(
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("check", "On create")
-//        tts= TextToSpeech(this){status->
-//            if(status == TextToSpeech.SUCCESS) {
-//                tts.language = Locale.ENGLISH
-//                tts.setPitch(1.3f)
-//            }
-//
-//        }
         enableEdgeToEdge()
         setContent {
             if (isBound) {
@@ -175,11 +161,6 @@ class MainActivity : ComponentActivity() {
                             MeditationMusicScreen(meditateViewModel = meditateViewModel)
                         }
 
-//                        composable<Destinations.BackupScreen> {
-////                            BackupScreen(backupScreenViewModel = backupViewModel)
-//                            MyApp(tts)
-//                        }
-
                         composable<Destinations.SettingsScreen> {
                             SettingsScreen(monitorViewModel = usageViewModel)
                         }
@@ -191,25 +172,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    fun MyApp(tts: TextToSpeech) {
-        var textToSpeak by remember { mutableStateOf("Hello, Jetpack Compose!") }
-
-        Column {
-            TextField(
-                value = textToSpeak,
-                onValueChange = { textToSpeak = it },
-                label = { Text("Enter text to speak") }
-            )
-            Button(onClick = { speakText(tts, textToSpeak) }) {
-                Text("Speak")
-            }
-        }
-    }
-
-    fun speakText(tts: TextToSpeech, text: String) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
-    }
 
     override fun onStop() {
         //Unbinding the created connection
@@ -238,9 +200,11 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i("check", "On destroy")
-//        tts.stop()
-//        tts.shutdown()
-    }fun isPermissionGranted(context: Context, permission: String): Boolean {
+
+    }
+
+
+    fun isPermissionGranted(context: Context, permission: String): Boolean {
     return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 }
 
