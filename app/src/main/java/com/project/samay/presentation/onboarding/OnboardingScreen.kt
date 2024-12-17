@@ -1,5 +1,9 @@
 package com.project.samay.presentation.onboarding
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,27 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun OnboardingScreen(){
+fun OnboardingScreen(viewModel: OnboardingViewModel,navController: NavController){
+
     Scaffold { padding->
         Box(modifier = Modifier.fillMaxSize()
             .padding(padding),
             contentAlignment = Alignment.Center
         ){
-            Column {
-                Button(onClick = {
-
-                }) {
-                    Text("Grant one permission")
-                }
-                Spacer(Modifier.height(16.dp))
-                Button(onClick ={
-
-                }) {
-                    Text("Grant all permissions")
-                }
-            }
+            PermissionScreen(viewModel,navController)
         }
     }
 }

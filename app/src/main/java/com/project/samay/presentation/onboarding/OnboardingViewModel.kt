@@ -1,17 +1,13 @@
 package com.project.samay.presentation.onboarding
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 
 class OnboardingViewModel: ViewModel() {
-    val visiblePermissionDialogQueue = mutableStateListOf<PermissionsRequired>()
+    val visiblePermissionDialogQueue = PermissionsRequired.entries.toMutableStateList()
 
-    fun dismissDialogue(){
-        if(visiblePermissionDialogQueue.isNotEmpty())
-            visiblePermissionDialogQueue.removeAt(visiblePermissionDialogQueue.lastIndex)
-        else
-            Log.i("OnboardingViewModel", "PermissionDialogue is empty")
+    fun dismissDialogue(permission: PermissionsRequired){
+        visiblePermissionDialogQueue.remove(permission)
     }
 
     fun onPermissionInteractionResult(
@@ -19,7 +15,11 @@ class OnboardingViewModel: ViewModel() {
         isGranted: Boolean
     ){
         if(!isGranted){
-            visiblePermissionDialogQueue.add(0,permissionsRequired)
+            visiblePermissionDialogQueue.add(permissionsRequired)
+        }else{
+            visiblePermissionDialogQueue.remove(permissionsRequired)
         }
     }
+
+    fun areAllPermissionsGranted() = (visiblePermissionDialogQueue.isEmpty())
 }
