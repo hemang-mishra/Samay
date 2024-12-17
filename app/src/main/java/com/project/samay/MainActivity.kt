@@ -1,11 +1,14 @@
 package com.project.samay
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import androidx.core.content.PackageManagerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,6 +44,9 @@ import com.project.samay.presentation.domains.UseDomainScreen
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.meditate.MeditationMusicScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
+import com.project.samay.presentation.onboarding.OnboardingScreen
+import com.project.samay.presentation.onboarding.OnboardingViewModel
+import com.project.samay.presentation.onboarding.PermissionsRequired
 import com.project.samay.presentation.settings.SettingsScreen
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
@@ -58,7 +66,8 @@ class MainActivity : ComponentActivity() {
     private val calendarViewModel by inject<CalendarViewModel>()
     private val meditateViewModel by inject<MeditateViewModel>()
     private val backupViewModel by inject<BackupScreenViewModel>()
-    private lateinit var tts: TextToSpeech
+    private val onboardingViewModel by inject<OnboardingViewModel>()
+//    private lateinit var tts: TextToSpeech
 
 
     private var isBound by mutableStateOf(false)
@@ -83,7 +92,7 @@ class MainActivity : ComponentActivity() {
         ).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
-//
+        Log.i("check", "On start")
 //        //Audio service setup:
 //        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
 //        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
@@ -93,13 +102,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tts= TextToSpeech(this){status->
-            if(status == TextToSpeech.SUCCESS) {
-                tts.language = Locale.ENGLISH
-                tts.setPitch(1.3f)
-            }
-
-        }
+        Log.i("check", "On create")
+//        tts= TextToSpeech(this){status->
+//            if(status == TextToSpeech.SUCCESS) {
+//                tts.language = Locale.ENGLISH
+//                tts.setPitch(1.3f)
+//            }
+//
+//        }
         enableEdgeToEdge()
         setContent {
             if (isBound) {
@@ -109,8 +119,11 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = NavHomeScreen
+                        startDestination = Destinations.OnboardingScreen
                     ) {
+                        composable<Destinations.OnboardingScreen> {
+                            OnboardingScreen(onboardingViewModel, navController)
+                        }
                         composable<NavHomeScreen> {
                             HomeScreen(
                                 domainViewModel,
@@ -162,10 +175,10 @@ class MainActivity : ComponentActivity() {
                             MeditationMusicScreen(meditateViewModel = meditateViewModel)
                         }
 
-                        composable<Destinations.BackupScreen> {
-//                            BackupScreen(backupScreenViewModel = backupViewModel)
-                            MyApp(tts)
-                        }
+//                        composable<Destinations.BackupScreen> {
+////                            BackupScreen(backupScreenViewModel = backupViewModel)
+//                            MyApp(tts)
+//                        }
 
                         composable<Destinations.SettingsScreen> {
                             SettingsScreen(monitorViewModel = usageViewModel)
@@ -201,26 +214,47 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         //Unbinding the created connection
         super.onStop()
+        Log.i("check", "On stop")
         unbindService(connection)
         isBound = false
     }
 
     override fun onResume() {
         super.onResume()
-        usageViewModel.getData()
+        Log.i("check", "On resume")
+        refreshPermissionsStatus(onboardingViewModel)
+        if(onboardingViewModel.areAllPermissionsGranted()) {
+            usageViewModel.getData()
         calendarViewModel.refresh(this)
-//        backUpRepository.restoreDatabase(this)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-//        backUpRepository.backupDatabase(this)
+        Log.i("check", "On pause")
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        tts.stop()
-        tts.shutdown()
+        Log.i("check", "On destroy")
+//        tts.stop()
+//        tts.shutdown()
+    }fun isPermissionGranted(context: Context, permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+}
+
+    private fun refreshPermissionsStatus(onboardingViewModel: OnboardingViewModel){
+        PermissionsRequired.entries.forEach {
+            if(ContextCompat.checkSelfPermission(this, it.permission) == PackageManager.PERMISSION_GRANTED){
+                onboardingViewModel.visiblePermissionDialogQueue.remove(it)
+
+        }else{
+            if(!onboardingViewModel.visiblePermissionDialogQueue.contains(it)){
+                onboardingViewModel.visiblePermissionDialogQueue.add(it)
+            }
+            }
+        }
     }
 
 }
