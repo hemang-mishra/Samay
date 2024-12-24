@@ -20,6 +20,28 @@ class TimeUtils {
             return calendar.get(Calendar.MINUTE)
         }
 
+        fun getRelativeTimeDescription(timeInMillis: Long): String {
+            val currentTimeMillis = System.currentTimeMillis()
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = currentTimeMillis
+
+            val currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+            val currentYear = calendar.get(Calendar.YEAR)
+
+            calendar.timeInMillis = timeInMillis
+            val eventDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+            val eventYear = calendar.get(Calendar.YEAR)
+
+            return when {
+                currentYear == eventYear && currentDayOfYear == eventDayOfYear -> "Today"
+                currentYear == eventYear && currentDayOfYear - eventDayOfYear == 1 -> "Yesterday"
+                else -> {
+                    val daysAgo = (currentTimeMillis - timeInMillis) / (1000 * 60 * 60 * 24)
+                    "$daysAgo days ago"
+                }
+            }
+        }
+
         fun addMinutesToMillis(currentTimeMillis: Long, timeInMinutes: Int): Long {
             // Convert timeInMinutes to milliseconds
             val timeInMillis = timeInMinutes * 60 * 1000L
@@ -70,7 +92,7 @@ class TimeUtils {
             return dateFormat.format(date)
         }
 
-        fun convertMillisToHoursAndMinutes(timeInMillis: Long): String {
+        fun convertTimeDurationToHoursAndMinutes(timeInMillis: Long): String {
             val totalMinutes = timeInMillis / (1000 * 60)
             val hours = totalMinutes / 60
             val minutes = totalMinutes % 60

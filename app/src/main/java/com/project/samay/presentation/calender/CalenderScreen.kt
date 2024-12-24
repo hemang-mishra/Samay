@@ -47,13 +47,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
 import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
 import com.project.samay.presentation.domains.BoldItalicText
 import com.project.samay.presentation.tasks.SelectDomainDialogue
-import com.project.samay.util.ProfileColors
 import com.project.samay.util.calculations.TimeUtils
 import com.project.samay.util.getRandomColor
 import kotlinx.coroutines.launch
@@ -164,7 +162,7 @@ fun CalendarItem(
     val context = LocalContext.current
     val daysAgo = TimeUtils.covertMillisToNumberOfDaysAgo(System.currentTimeMillis())
     val durationString =
-        TimeUtils.convertMillisToHoursAndMinutes(calendarEvent.dtend - calendarEvent.dtstart)
+        TimeUtils.convertTimeDurationToHoursAndMinutes(calendarEvent.dtend - calendarEvent.dtstart)
     // Validate color string
     val profileColor = getRandomColor()
     Column(

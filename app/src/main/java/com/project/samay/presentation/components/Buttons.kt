@@ -1,6 +1,9 @@
 package com.project.samay.presentation.components
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,6 +26,7 @@ fun PrimaryAppButton(
     ) {
         if(icon != null){
             Icon(imageVector = icon, contentDescription = null)
+            Spacer(modifier=Modifier.width(8.dp))
         }
         Text(text)
     }

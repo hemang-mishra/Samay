@@ -22,7 +22,7 @@ class CalendarViewModel(
     private var _calendarsList = mutableStateOf(emptyList<CalendarType>())
     val calendarType: State<List<CalendarType>> = _calendarsList
     val allDomains = calendarScreenUseCases.allDomain
-
+    
 
     private var _calendarUIState = mutableStateOf(CalendarUIState())
     val calendarUIState: State<CalendarUIState> = _calendarUIState
