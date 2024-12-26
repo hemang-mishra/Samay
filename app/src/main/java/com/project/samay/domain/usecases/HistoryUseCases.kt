@@ -8,6 +8,8 @@ import com.project.samay.domain.model.HistoryEntity
 class HistoryUseCases(private val historyRepository: HistoryRepository,
                       private val domainRepository: DomainRepository) {
 
+    fun getHistory() = historyRepository.getAllHistory()
+
     //Perform delete history operation in the history screen
     suspend fun deleteHistory(historyEntity: HistoryEntity){
         historyRepository.deleteHistory(historyEntity)

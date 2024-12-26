@@ -40,8 +40,8 @@ import androidx.navigation.NavController
 import com.project.samay.SamayApplication
 import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.model.DEFAULT_TARGET
-import com.project.samay.presentation.domains.BoldItalicText
-import com.project.samay.presentation.domains.TopAppBarGoal
+import com.project.samay.presentation.components.BoldItalicText
+import com.project.samay.presentation.components.TopAppBarGoal
 import com.project.samay.util.calculations.Logic
 
 @Composable

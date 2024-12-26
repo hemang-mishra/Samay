@@ -2,11 +2,14 @@ package com.project.samay.domain.usecases
 
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.data.repository.DomainRepository
+import com.project.samay.data.repository.HistoryRepository
 import com.project.samay.util.calculations.Logic
+import com.project.samay.util.calculations.TimeUtils
 import kotlinx.coroutines.flow.first
 
 class DomainScreenUseCases(
-    private val domainRepository: DomainRepository) {
+    private val domainRepository: DomainRepository,
+    private val historyRepository: HistoryRepository) {
     init {
         initialize()
     }
@@ -41,6 +44,14 @@ class DomainScreenUseCases(
 
     suspend fun addTimeInMin(time: Int, oldDomainEntity: DomainEntity){
         val newDomainEntity = oldDomainEntity.copy(timeSpent = oldDomainEntity.timeSpent + time)
+        val currentTime = System.currentTimeMillis()
+        historyRepository.addHistory(
+            TimeUtils.addMinutesToMillis(currentTime, -time),
+            currentTime,
+            newDomainEntity.name,
+            newDomainEntity.description,
+            newDomainEntity
+        )
         domainRepository.upsertDomain(newDomainEntity)
     }
 

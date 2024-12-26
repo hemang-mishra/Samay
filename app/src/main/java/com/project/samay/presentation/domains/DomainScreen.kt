@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.presentation.components.BoldItalicText
+import com.project.samay.presentation.components.TopAppBarGoal
 import java.util.Locale
 
 
@@ -164,13 +165,3 @@ fun Float.toOneDecimalPlace(): Float{
     return format.toFloat()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopAppBarGoal(text: String = "Domains") {
-    LargeTopAppBar(title = {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineLarge
-        )
-    })
-}

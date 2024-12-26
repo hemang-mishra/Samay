@@ -7,6 +7,7 @@ import com.project.samay.SamayApplication
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.TaskEntity
 import com.project.samay.data.repository.DomainRepository
+import com.project.samay.data.repository.HistoryRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.domain.repository.CalendarRepository
 import com.project.samay.util.calculations.Logic
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.first
 class TaskScreenUseCases(
     private val taskRepository: TaskRepository,
     private val domainRepository: DomainRepository,
-    private val calenderRepository: CalendarRepository
+    private val calenderRepository: CalendarRepository,
+    private val historyRepository: HistoryRepository
 ) {
     val allTasks = taskRepository.allTasks
     val allDomains = domainRepository.allDomains
@@ -76,7 +78,15 @@ class TaskScreenUseCases(
         if (domainEntity != null) {
             val newDomainEntity = domainEntity.copy(timeSpent = domainEntity.timeSpent + time)
             domainRepository.upsertDomain(newDomainEntity)
+            historyRepository.addHistory(
+                start,
+                end,
+                taskEntity.taskName,
+                taskEntity.taskDescription,
+                newDomainEntity
+            )
         }
+
 //        Log.i("Adding in calender", "$id ${taskEntity.taskName} $start $end")
         if (id != null)
             calenderRepository.addEvent(

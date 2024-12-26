@@ -41,6 +41,8 @@ import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.domains.NavAddDomainScreen
 import com.project.samay.presentation.domains.NavUseDomainScreen
 import com.project.samay.presentation.domains.UseDomainScreen
+import com.project.samay.presentation.history.HistoryViewModel
+import com.project.samay.presentation.history.MainHistoryScreen
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.meditate.MeditationMusicScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
@@ -65,7 +67,7 @@ class MainActivity : ComponentActivity() {
     private val taskViewModel by inject<TaskViewModel>()
     private val calendarViewModel by inject<CalendarViewModel>()
     private val meditateViewModel by inject<MeditateViewModel>()
-    private val backupViewModel by inject<BackupScreenViewModel>()
+    private val historyViewModel by inject<HistoryViewModel>()
     private val onboardingViewModel by inject<OnboardingViewModel>()
 
     private var isBound by mutableStateOf(false)
@@ -163,6 +165,10 @@ class MainActivity : ComponentActivity() {
 
                         composable<Destinations.SettingsScreen> {
                             SettingsScreen(monitorViewModel = usageViewModel)
+                        }
+
+                        composable<Destinations.HistoryScreen> {
+                            MainHistoryScreen(historyViewModel)
                         }
                     }
 
