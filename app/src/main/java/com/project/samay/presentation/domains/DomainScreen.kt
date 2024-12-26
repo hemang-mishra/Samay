@@ -29,20 +29,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.project.samay.data.model.DomainEntity
-import com.project.samay.util.ProfileColors
+import com.project.samay.domain.model.DomainEntity
+import com.project.samay.presentation.components.BoldItalicText
 import java.util.Locale
 
 
@@ -162,18 +158,6 @@ fun DomainItem(domain: DomainEntity, isSelected: Boolean, viewModel: DomainViewM
 
 }
 
-@Composable
-fun BoldItalicText(text: String, modifier: Modifier = Modifier, fontSize: Int = 16) {
-    Text(
-        modifier = modifier,
-        text = text,
-        style = TextStyle(
-            fontSize = fontSize.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-            fontStyle = FontStyle.Italic
-        )
-    )
-}
 
 fun Float.toOneDecimalPlace(): Float{
     val format = String.format(Locale.ROOT, "%.1f", this)

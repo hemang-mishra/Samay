@@ -1,4 +1,4 @@
-package com.project.samay.data.source.local
+package com.project.samay.data.source.local.calendar
 
 import android.content.Context
 import androidx.room.Database
@@ -14,7 +14,7 @@ abstract class CalendarDatabase : RoomDatabase(){
         @Volatile
         private var INSTANCE: CalendarDatabase? = null
 
-        fun getDatabase(context: Context): CalendarDatabase{
+        fun getDatabase(context: Context): CalendarDatabase {
             return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,

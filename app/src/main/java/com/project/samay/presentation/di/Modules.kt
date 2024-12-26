@@ -1,12 +1,11 @@
 package com.project.samay.presentation.di
 
 import BackUpRepository
-import androidx.compose.material.icons.Icons
 import androidx.room.Room
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.data.source.local.AppDatabase
-import com.project.samay.data.source.local.CalendarDatabase
+import com.project.samay.data.source.local.calendar.CalendarDatabase
 import com.project.samay.domain.backup.BackupRepo
 import com.project.samay.domain.mediaplayer.MusicPlayer
 import com.project.samay.domain.notification.NotificationModule
@@ -25,7 +24,6 @@ import com.project.samay.presentation.focus.FocusViewModel
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.onboarding.OnboardingViewModel
-import com.project.samay.presentation.onboarding.PermissionsRequired
 import com.project.samay.presentation.tasks.TaskViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel

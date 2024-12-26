@@ -2,7 +2,7 @@ package com.project.samay.domain.usecases
 
 import android.content.Context
 import android.util.Log
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.util.calculations.TimeUtils
 
 class FocusScreenUseCases(

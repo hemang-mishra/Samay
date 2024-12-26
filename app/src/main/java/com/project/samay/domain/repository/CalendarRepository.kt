@@ -5,7 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.CalendarContract
 import android.util.Log
-import com.project.samay.data.source.local.CalendarDao
+import com.project.samay.data.source.local.calendar.CalendarDao
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
 import com.project.samay.domain.util.Preferences.NO_OF_DAYS_BEFORE

@@ -2,21 +2,16 @@ package com.project.samay.presentation.tasks
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.samay.SamayApplication
-import com.project.samay.data.model.DomainEntity
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.DomainEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.usecases.TaskScreenUseCases
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import kotlin.time.Duration.Companion.hours
 
 class TaskViewModel(private val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
     val tasks = taskScreenUseCases.allTasks

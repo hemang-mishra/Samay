@@ -9,7 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.presentation.focus.StopwatchState
 import com.project.samay.util.Constants.ACTION_SERVICE_CANCEL
 import com.project.samay.util.Constants.ACTION_SERVICE_START

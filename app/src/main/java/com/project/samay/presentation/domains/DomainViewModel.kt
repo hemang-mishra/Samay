@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.usecases.DomainScreenUseCases
 import kotlinx.coroutines.launch
 

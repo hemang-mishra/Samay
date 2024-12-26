@@ -2,7 +2,7 @@ package com.project.samay.domain.usecases
 
 import android.content.Context
 import android.util.Log
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarEventStatus
 import com.project.samay.domain.repository.CalendarRepository
