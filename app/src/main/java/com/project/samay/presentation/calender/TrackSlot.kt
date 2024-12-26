@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +26,7 @@ import com.project.samay.ui.theme.SamayTheme
 import com.project.samay.util.calculations.TimeUtils
 
 @Composable
-fun TimeSlotNote() {
+fun TimeSlotNote(allSlots: List<Pair<Long, Long>>, selectedSlots: List<Pair<Long,Long>>, onClickSlot:(Pair<Long,Long>)->Unit, onSave:()->Unit) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -42,11 +40,9 @@ fun TimeSlotNote() {
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-
-            TimeSlotItem(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(), 30))
-            TimeSlotItem(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(), 30))
-            TimeSlotItem(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(), 30))
-            TimeSlotItem(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(), 30), true)
+            allSlots.forEach {
+                TimeSlotItem(it.first, it.second, it in selectedSlots)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -90,6 +86,17 @@ fun PreviewTimeSlotNote() {
     SamayTheme(
         darkTheme = true
     ) {
-        TimeSlotNote()
+        TimeSlotNote(
+            allSlots = listOf(
+                Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
+                Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
+                Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
+                Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
+            ),
+            selectedSlots = listOf(),
+            {}
+        ){
+
+        }
     }
 }

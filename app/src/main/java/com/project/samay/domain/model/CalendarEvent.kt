@@ -22,5 +22,5 @@ enum class CalendarEventStatus{
     REJECTED
 }
 
-const val NO_OF_DAYS_BEFORE = 7
+
 
