@@ -1,4 +1,4 @@
-package com.project.samay.data.model
+package com.project.samay.domain.model
 
 import android.os.Parcelable
 import androidx.room.Entity

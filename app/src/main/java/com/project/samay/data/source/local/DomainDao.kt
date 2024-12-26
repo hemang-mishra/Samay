@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,4 +20,6 @@ interface DomainDao {
 
     @Query("SELECT * FROM DomainEntity WHERE id = :domainId")
     suspend fun getDomainById(domainId: Int): DomainEntity?
+
+
 }

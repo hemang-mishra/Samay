@@ -1,8 +1,7 @@
 package com.project.samay.domain.usecases
 
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.data.repository.DomainRepository
-import com.project.samay.data.repository.TaskRepository
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.flow.first
 
@@ -29,7 +28,7 @@ class DomainScreenUseCases(
         domainRepository.upsertDomain(domainEntity)
     }
 
-    suspend fun updateDomainDetails(name: String, monthlyTarget: String,expectedPercent: Float,
+    suspend fun updateDomainDetails(name: String, monthlyTarget: String, expectedPercent: Float,
                                     oldDomainEntity: DomainEntity, description: String, timeSpent: Long
                                     ){
         val newDomainEntity = oldDomainEntity.copy(name = name, monthlyTarget = monthlyTarget, timeSpent = timeSpent, expectedPercentage = expectedPercent, description = description)

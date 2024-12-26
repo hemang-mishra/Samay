@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.project.samay.data.model.DomainEntity
-import com.project.samay.data.model.TaskEntity
-import com.project.samay.data.source.local.DomainDao
-import com.project.samay.data.source.local.TaskDao
+import com.project.samay.domain.model.DomainEntity
+import com.project.samay.domain.model.TaskEntity
 
 @Database(entities = [DomainEntity::class, TaskEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

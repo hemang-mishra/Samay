@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.samay.SamayApplication
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.util.calculations.Logic
 import kotlinx.serialization.Serializable

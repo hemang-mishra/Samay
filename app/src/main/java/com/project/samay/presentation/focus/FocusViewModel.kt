@@ -3,9 +3,8 @@ package com.project.samay.presentation.focus
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.service.ServiceHelper
-import com.project.samay.domain.service.StopwatchService
 import com.project.samay.domain.usecases.FocusScreenUseCases
 import com.project.samay.util.Constants
 import com.project.samay.util.calculations.TimeUtils

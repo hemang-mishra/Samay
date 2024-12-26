@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlarmAdd
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -38,17 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.project.samay.SamayApplication
-import com.project.samay.data.model.DomainEntity
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.presentation.domains.BoldItalicText
-import com.project.samay.presentation.domains.DomainViewModel
-import com.project.samay.presentation.domains.NavAddDomainScreen
-import com.project.samay.presentation.domains.NavUseDomainScreen
 import com.project.samay.presentation.domains.TopAppBarGoal
-import com.project.samay.presentation.domains.toOneDecimalPlace
 import com.project.samay.util.calculations.Logic
 
 @Composable
@@ -106,7 +99,7 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
 }
 
 @Composable
-fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, navController: NavController, target: Long,onClick: ()->Unit) {
+fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, navController: NavController, target: Long, onClick: ()->Unit) {
     val context = LocalContext.current.applicationContext as SamayApplication
     Column(
         modifier = Modifier

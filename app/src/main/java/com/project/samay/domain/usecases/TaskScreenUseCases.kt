@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.project.samay.SamayApplication
-import com.project.samay.data.model.DomainEntity
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.DomainEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.domain.repository.CalendarRepository

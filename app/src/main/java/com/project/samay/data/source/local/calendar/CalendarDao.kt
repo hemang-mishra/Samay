@@ -1,4 +1,4 @@
-package com.project.samay.data.source.local
+package com.project.samay.data.source.local.calendar
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -4,7 +4,7 @@ package com.project.samay.data.repository
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.data.source.local.DomainDao
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.CoroutineScope

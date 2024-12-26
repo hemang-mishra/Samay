@@ -1,6 +1,6 @@
 package com.project.samay.presentation.calender
 
-import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.CalendarEvent
 
 data class CalendarUIState(

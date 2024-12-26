@@ -1,7 +1,7 @@
 package com.project.samay.data.repository
 
 
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.data.source.local.TaskDao
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.Dispatchers

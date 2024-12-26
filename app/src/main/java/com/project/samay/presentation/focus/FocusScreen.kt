@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.project.samay.R
 import com.project.samay.SamayApplication
-import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.domain.service.StopwatchService
 import org.koin.compose.koinInject
