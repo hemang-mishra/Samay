@@ -42,7 +42,7 @@ class TimeUtils {
             }
         }
 
-        fun addMinutesToMillis(currentTimeMillis: Long, timeInMinutes: Int): Long {
+        fun addMinutesToMillis(currentTimeMillis: Long = System.currentTimeMillis(), timeInMinutes: Int): Long {
             // Convert timeInMinutes to milliseconds
             val timeInMillis = timeInMinutes * 60 * 1000L
             // Add the timeInMillis to currentTimeMillis

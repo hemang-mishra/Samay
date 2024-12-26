@@ -13,7 +13,8 @@ class HistoryRepository(private val dao: HistoryDAO) {
             start,
             end,
             domainEntity.id,
-            domainEntity.color
+            domainEntity.color,
+            domainEntity.name
         ))
     }
 
@@ -25,7 +26,7 @@ class HistoryRepository(private val dao: HistoryDAO) {
         dao.upsertHistory(historyEntity)
     }
 
-    fun getAllHistory()=dao::getAllHistory
+    fun getAllHistory()=dao.getAllHistory()
 
-    fun getDistinctNames()=dao::getDistinctNames
+    fun getDistinctNames()=dao.getDistinctNames()
 }

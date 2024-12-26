@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.samay.SamayApplication
 import com.project.samay.domain.model.DEFAULT_TARGET
-import com.project.samay.presentation.domains.BoldItalicText
+import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable

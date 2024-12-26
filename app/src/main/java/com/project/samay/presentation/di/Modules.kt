@@ -3,8 +3,10 @@ package com.project.samay.presentation.di
 import BackUpRepository
 import androidx.room.Room
 import com.project.samay.data.repository.DomainRepository
+import com.project.samay.data.repository.HistoryRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.data.source.local.AppDatabase
+import com.project.samay.data.source.local.HistoryDatabase
 import com.project.samay.data.source.local.calendar.CalendarDatabase
 import com.project.samay.domain.backup.BackupRepo
 import com.project.samay.domain.mediaplayer.MusicPlayer
@@ -15,12 +17,14 @@ import com.project.samay.domain.service.StopwatchService
 import com.project.samay.domain.usecases.CalendarScreenUseCases
 import com.project.samay.domain.usecases.DomainScreenUseCases
 import com.project.samay.domain.usecases.FocusScreenUseCases
+import com.project.samay.domain.usecases.HistoryUseCases
 import com.project.samay.domain.usecases.MonitorAppsScreenUseCases
 import com.project.samay.domain.usecases.TaskScreenUseCases
 import com.project.samay.presentation.backup.BackupScreenViewModel
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.focus.FocusViewModel
+import com.project.samay.presentation.history.HistoryViewModel
 import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.onboarding.OnboardingViewModel
@@ -43,6 +47,11 @@ val appModules = module {
             .fallbackToDestructiveMigration()
             .build()
     }
+    single {
+        Room.databaseBuilder(androidApplication(), HistoryDatabase::class.java, "history_db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
 
     single { NotificationModule.provideNotificationManager(androidApplication()) }
     single { NotificationModule.provideNotificationBuilder(androidApplication()) }
@@ -56,15 +65,18 @@ val appModules = module {
     single { get<AppDatabase>().domainDao() }
     single { get<AppDatabase>().taskDao() }
     single { get<CalendarDatabase>().calendarDao() }
+    single { get<HistoryDatabase>().historyDao()}
     single { DomainRepository(get()) }
     single { TaskRepository(get())}
     single { BackupRepo()}
+    single { HistoryRepository(get()) }
 
     single { MonitorAppsScreenUseCases(get(), get()) }
-    single { DomainScreenUseCases(get()) }
-    single { TaskScreenUseCases(get(), get(), get()) }
+    single { DomainScreenUseCases(get(), get()) }
+    single { TaskScreenUseCases(get(), get(), get(), get()) }
     single { FocusScreenUseCases(get()) }
     single { CalendarScreenUseCases(get(), get()) }
+    single { HistoryUseCases(get(), get()) }
 
     viewModel { FocusViewModel(get()) }
     viewModel { DomainViewModel(get()) }
@@ -74,4 +86,5 @@ val appModules = module {
     viewModel {MeditateViewModel(get())}
     viewModel { BackupScreenViewModel(get())}
     viewModel { OnboardingViewModel() }
+    viewModel { HistoryViewModel(get()) }
 }

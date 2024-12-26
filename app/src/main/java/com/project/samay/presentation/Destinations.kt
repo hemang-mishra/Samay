@@ -15,4 +15,7 @@ sealed interface Destinations {
     @Serializable
     data object SettingsScreen: Destinations
 
+    @Serializable
+    data object HistoryScreen: Destinations
+
 }

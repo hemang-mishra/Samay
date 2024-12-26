@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
-import com.project.samay.presentation.domains.BoldItalicText
+import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.tasks.SelectDomainDialogue
 import com.project.samay.util.calculations.TimeUtils
 import com.project.samay.util.getRandomColor

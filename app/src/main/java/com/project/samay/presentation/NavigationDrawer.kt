@@ -33,6 +33,10 @@ fun NavigationDrawerContent(navController: NavController) {
                         NavigationDrawerItems.SETTINGS -> {
                             navController.navigate(Destinations.SettingsScreen)
                         }
+
+                        NavigationDrawerItems.HISTORY -> {
+                            navController.navigate(Destinations.HistoryScreen)
+                        }
                     }
                 }
             }

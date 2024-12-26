@@ -36,7 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.project.samay.domain.model.MonitoredApps
-import com.project.samay.presentation.domains.BoldItalicText
+import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.util.calculations.TimeUtils
 
 @Composable
