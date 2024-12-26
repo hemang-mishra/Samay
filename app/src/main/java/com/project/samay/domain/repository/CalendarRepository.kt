@@ -8,10 +8,9 @@ import android.util.Log
 import com.project.samay.data.source.local.CalendarDao
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
-import com.project.samay.domain.model.NO_OF_DAYS_BEFORE
+import com.project.samay.domain.util.Preferences.NO_OF_DAYS_BEFORE
 import com.project.samay.util.calculations.TimeUtils
 import java.util.TimeZone
-import java.util.concurrent.Flow
 
 class CalendarRepository(private val calendarDao: CalendarDao) {
     val allSavedRoomEntries = calendarDao.getAllCalendarEvents()
@@ -60,8 +59,8 @@ class CalendarRepository(private val calendarDao: CalendarDao) {
         return emptyList()
     }
 
-    fun fetchEventsOFLastWeek(context: Context): List<CalendarEvent> {
-        val timeInMillisOfDaysAgo = TimeUtils.getTimeInMillisOfDaysAgo(NO_OF_DAYS_BEFORE)
+    fun fetchEventsOFLastWeek(context: Context, noOfDaysBefore: Int = NO_OF_DAYS_BEFORE): List<CalendarEvent> {
+        val timeInMillisOfDaysAgo = TimeUtils.getTimeInMillisOfDaysAgo(noOfDaysBefore)
         val endTimeInMillis = System.currentTimeMillis()
 
         // Define the URI for the Instances table and specify the time range
