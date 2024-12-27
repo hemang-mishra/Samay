@@ -1,6 +1,5 @@
 package com.project.samay.presentation.history
 
-import android.provider.ContactsContract.Profile
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,24 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.HistoryEntity
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.components.TopAppBarGoal
-import com.project.samay.presentation.domains.DomainItem
-import com.project.samay.presentation.domains.DomainViewModel
-import com.project.samay.presentation.domains.NavAddDomainScreen
-import com.project.samay.presentation.domains.NavUseDomainScreen
-import com.project.samay.presentation.domains.toOneDecimalPlace
 import com.project.samay.util.ProfileColors
 import com.project.samay.util.calculations.TimeUtils
 
 @Composable
-fun MainHistoryScreen(historyViewModel: HistoryViewModel){
+fun MainHistoryScreen(historyViewModel: HistoryViewModel) {
     val uiState by historyViewModel.historyUiState.collectAsState(HistoryScreenUIState())
     val history by uiState.historyItems.collectAsState(initial = emptyList())
-    HistoryScreen(history, uiState.selectedHistory,{
+    HistoryScreen(history, uiState.selectedHistory, {
         historyViewModel.deleteHistory(it)
     }) {
         historyViewModel.selectHistory(it)
@@ -55,7 +45,12 @@ fun MainHistoryScreen(historyViewModel: HistoryViewModel){
 }
 
 @Composable
-private fun HistoryScreen(history: List<HistoryEntity>, selectedHistory: HistoryEntity?, deleteHistory: (HistoryEntity) -> Unit, onSelectHistory: (HistoryEntity)->Unit){
+private fun HistoryScreen(
+    history: List<HistoryEntity>,
+    selectedHistory: HistoryEntity?,
+    deleteHistory: (HistoryEntity) -> Unit,
+    onSelectHistory: (HistoryEntity) -> Unit
+) {
     Scaffold { it ->
         Column(
             modifier = Modifier.padding(it)
@@ -65,7 +60,7 @@ private fun HistoryScreen(history: List<HistoryEntity>, selectedHistory: History
                 modifier = Modifier.weight(1f)
             ) {
                 itemsIndexed(history) { _, historyEntity ->
-                    HistoryItem(historyEntity,historyEntity == selectedHistory, {
+                    HistoryItem(historyEntity, historyEntity == selectedHistory, {
                         deleteHistory(historyEntity)
                     }) {
                         onSelectHistory(historyEntity)
@@ -81,23 +76,26 @@ private fun HistoryScreen(history: List<HistoryEntity>, selectedHistory: History
 
 
 @Composable
-fun HistoryItem(historyEntity: HistoryEntity, isSelected: Boolean, deleteHistory:(HistoryEntity)->Unit, onClick: (HistoryEntity)->Unit) {
-    val timeSpent = (historyEntity.end- historyEntity.start)/60/1000
+fun HistoryItem(
+    historyEntity: HistoryEntity,
+    isSelected: Boolean,
+    deleteHistory: (HistoryEntity) -> Unit,
+    onClick: (HistoryEntity) -> Unit
+) {
+    val timeSpent = (historyEntity.end - historyEntity.start) / 60 / 1000
     val startTime = TimeUtils.convertMillisToString(historyEntity.start)
     val relativeTime = TimeUtils.getRelativeTimeDescription(historyEntity.start)
 
-    Column(
-        modifier = Modifier
-            .animateContentSize()
-            .padding(vertical = 8.dp, horizontal = 8.dp)
-            .clickable { onClick(historyEntity) }
-    ) {
+    Column(modifier = Modifier
+        .animateContentSize()
+        .padding(vertical = 8.dp, horizontal = 8.dp)
+        .clickable { onClick(historyEntity) }) {
         Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier
+            horizontalArrangement = Arrangement.End, modifier = Modifier
         ) {
             Icon(
-                imageVector = Icons.Default.Category, contentDescription = null,
+                imageVector = Icons.Default.Category,
+                contentDescription = null,
                 tint = Color(historyEntity.domainColor),
                 modifier = Modifier
                     .align(Alignment.Top)
@@ -118,8 +116,7 @@ fun HistoryItem(historyEntity: HistoryEntity, isSelected: Boolean, deleteHistory
                 Row(modifier = Modifier) {
                     Text(text = (timeSpent).toString())
                     BoldItalicText(
-                        text = " min",
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        text = " min", modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
                 BoldItalicText(text = "spent")
@@ -127,8 +124,7 @@ fun HistoryItem(historyEntity: HistoryEntity, isSelected: Boolean, deleteHistory
             Column(modifier = Modifier) {
                 Row {
                     Text(
-                        text = startTime,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        text = startTime, modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
                 HorizontalDivider(modifier = Modifier.width(36.dp))
@@ -141,8 +137,7 @@ fun HistoryItem(historyEntity: HistoryEntity, isSelected: Boolean, deleteHistory
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BoldItalicText(
-                    text = "Description: ",
-                    modifier = Modifier.padding(top = 4.dp)
+                    text = "Description: ", modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(text = historyEntity.description)
             }
@@ -162,7 +157,7 @@ fun HistoryItem(historyEntity: HistoryEntity, isSelected: Boolean, deleteHistory
 
 @Preview
 @Composable
-fun PreviewHistoryScreen(){
+fun PreviewHistoryScreen() {
     val history = listOf(
         HistoryEntity(
             1,
@@ -173,7 +168,8 @@ fun PreviewHistoryScreen(){
             1,
             ProfileColors.LIME.hex,
             "Work",
-        ))
-    HistoryScreen(history,history.get(0),{} ) { }
+        )
+    )
+    HistoryScreen(history, history.get(0), {}) { }
 
 }
