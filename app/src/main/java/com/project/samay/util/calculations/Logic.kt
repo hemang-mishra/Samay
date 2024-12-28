@@ -1,7 +1,5 @@
 package com.project.samay.util.calculations
 
-import com.project.samay.presentation.domains.toOneDecimalPlace
-import com.project.samay.util.ProfileColors
 
 class Logic {
     companion object{
@@ -24,11 +22,7 @@ class Logic {
             return rate
         }
 
-        fun getColor(size: Int): Long{
-            val noOfColors = ProfileColors.entries.size
-            val color = ProfileColors.entries.elementAt(size % noOfColors)
-            return color.hex
-        }
+
 
         fun formatInHrsAndMins(timeInMin : Long): String{
             val hours = timeInMin/60

@@ -27,10 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.HistoryEntity
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.components.TopAppBarGoal
-import com.project.samay.util.ProfileColors
 import com.project.samay.util.calculations.TimeUtils
 
 @Composable
@@ -166,7 +166,7 @@ fun PreviewHistoryScreen() {
             TimeUtils.addMinutesToMillis(timeInMinutes = -180),
             TimeUtils.addMinutesToMillis(timeInMinutes = -120),
             1,
-            ProfileColors.LIME.hex,
+            CalendarColor.getRandomColor().color,
             "Work",
         )
     )

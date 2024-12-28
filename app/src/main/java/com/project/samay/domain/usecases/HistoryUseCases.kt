@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.project.samay.SamayApplication
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.HistoryRepository
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.HistoryEntity
 import com.project.samay.domain.model.TaskEntity
 import com.project.samay.domain.repository.CalendarRepository
@@ -59,7 +60,8 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
                 historyEntity.name,
                 historyEntity.description,
                 historyEntity.start,
-                historyEntity.end
+                historyEntity.end,
+                CalendarColor.fromColor((domainEntity?.color) ?: historyEntity.domainColor)?:CalendarColor.KEY_1
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

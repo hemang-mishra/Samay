@@ -9,6 +9,7 @@ import com.project.samay.domain.model.TaskEntity
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.HistoryRepository
 import com.project.samay.data.repository.TaskRepository
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.repository.CalendarRepository
 import com.project.samay.util.calculations.Logic
 import kotlinx.coroutines.flow.first
@@ -95,7 +96,8 @@ class TaskScreenUseCases(
                 taskEntity.taskName,
                 taskEntity.taskDescription,
                 start,
-                end
+                end,
+                CalendarColor.fromColor((domainEntity?.color) ?: taskEntity.domainColor)?: CalendarColor.KEY_1
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

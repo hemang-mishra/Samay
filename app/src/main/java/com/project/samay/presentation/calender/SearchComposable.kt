@@ -35,7 +35,6 @@ import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.components.PrimaryAppButton
 import com.project.samay.presentation.history.HistoryItem
 import com.project.samay.ui.theme.SamayTheme
-import com.project.samay.util.ProfileColors
 
 @Composable
 fun SearchComposable(
@@ -146,21 +145,21 @@ fun SearchItem(distinctNames: DistinctNames, isSelected: Boolean, onClick: () ->
 fun SearchComposablePreview() {
     SamayTheme {
         Surface {
-            SearchComposable(
-                "Hemang",
-                listOf(
-                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
-                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
-                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name")
-                ),
-                DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
-//                null,
-                false,
-                emptyList(),
-                onSelectName = {},
-                onConfirm = {},
-                onChangeQuery = {},
-            ) { }
+//            SearchComposable(
+//                "Hemang",
+//                listOf(
+//                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
+//                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
+//                    DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name")
+//                ),
+//                DistinctNames("name", "description", 1, ProfileColors.LIME.hex, "name"),
+////                null,
+//                false,
+//                emptyList(),
+//                onSelectName = {},
+//                onConfirm = {},
+//                onChangeQuery = {},
+//            ) { }
         }
     }
 }

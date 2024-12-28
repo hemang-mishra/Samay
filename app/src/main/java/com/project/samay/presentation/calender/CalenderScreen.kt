@@ -50,12 +50,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.project.samay.SamayApplication
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.tasks.SelectDomainDialogue
 import com.project.samay.util.calculations.TimeUtils
-import com.project.samay.util.getRandomColor
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -204,7 +204,7 @@ fun CalendarItem(
     val durationString =
         TimeUtils.convertTimeDurationToHoursAndMinutes(calendarEvent.dtend - calendarEvent.dtstart)
     // Validate color string
-    val profileColor = getRandomColor()
+    val profileColor = CalendarColor.getRandomColor()
     Column(
         modifier = Modifier
             .animateContentSize()
@@ -217,7 +217,7 @@ fun CalendarItem(
         ) {
             Icon(
                 imageVector = Icons.Default.CalendarMonth, contentDescription = null,
-                tint = Color(profileColor.hex),
+                tint = Color(profileColor.color),
                 modifier = Modifier
                     .align(Alignment.Top)
                     .width(24.dp)
