@@ -17,9 +17,9 @@ interface HistoryDAO {
     @Delete
     suspend fun deleteHistory(historyEntity: HistoryEntity)
 
-    @Query("SELECT * FROM HistoryEntity")
+    @Query("SELECT * FROM HistoryEntity ORDER BY start DESC")
     fun getAllHistory(): Flow<List<HistoryEntity>>
 
-    @Query("SELECT DISTINCT name, domainEntityId FROM HistoryEntity")
+    @Query("SELECT DISTINCT name,description,domainEntityId,domainColor,domainName FROM HistoryEntity")
     fun getDistinctNames(): Flow<List<DistinctNames>>
 }

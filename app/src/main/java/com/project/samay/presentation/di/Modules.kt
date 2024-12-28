@@ -76,12 +76,12 @@ val appModules = module {
     single { TaskScreenUseCases(get(), get(), get(), get()) }
     single { FocusScreenUseCases(get()) }
     single { CalendarScreenUseCases(get(), get()) }
-    single { HistoryUseCases(get(), get()) }
+    single { HistoryUseCases(get(), get(), get()) }
 
     viewModel { FocusViewModel(get()) }
     viewModel { DomainViewModel(get()) }
     viewModel { TaskViewModel(get()) }
-    viewModel { CalendarViewModel(get(), get()) }
+    viewModel { CalendarViewModel(get(), get(), get(), get()) }
     viewModel { MonitorViewModel(get())}
     viewModel {MeditateViewModel(get())}
     viewModel { BackupScreenViewModel(get())}
