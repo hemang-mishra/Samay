@@ -1,7 +1,9 @@
 package com.project.samay.presentation.domains
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,9 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.samay.presentation.components.ColorItem
+import com.project.samay.presentation.components.ColorPickerDialog
 import kotlinx.serialization.Serializable
 
 
@@ -33,23 +38,24 @@ data class NavAddDomainScreen(val isUpdate: Boolean = false)
 
 @Composable
 fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController: NavController) {
-    val domain = if (isUpdate) viewModel.uiStateValue.value.selectedDomain else null
+    val uiState by viewModel.uiStateValue
+    val domain = if (isUpdate) uiState.selectedDomain else null
     val allDomains by viewModel.allDomains.collectAsState(initial = emptyList())
     val context = LocalContext.current
 //    val isUpdate = domain != null
     var name by remember { mutableStateOf(domain?.name ?: "") }
-    var description by remember { mutableStateOf(domain?.description ?: "") }
-    var monthlyTarget by remember { mutableStateOf(domain?.monthlyTarget ?: "") }
+    var description by remember { mutableStateOf(domain?.description ?: "None") }
+    var monthlyTarget by remember { mutableStateOf(domain?.monthlyTarget ?: "None") }
     var expectedPercentage by remember {
         mutableStateOf<String>(
             domain?.expectedPercentage?.toString()
-                ?: ""
+                ?: "0"
         )
     }
     var timeSpent by remember {
-        mutableStateOf(domain?.timeSpent?.toString() ?: "")
-
+        mutableStateOf(domain?.timeSpent?.toString() ?: "0")
     }
+
     Scaffold(
     ) {
         Box(
@@ -136,6 +142,21 @@ fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController
                 }
 
                 item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Selected color"
+                        )
+                        ColorItem(Color(uiState.selectedColor.color)) {
+                            viewModel.switchVisibilityOfColorPicker()
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(36.dp))
+                }
+
+                item {
                     Button(
                         onClick = {
                             if (viewModel.getTotalExpectedPercentSum(
@@ -181,6 +202,17 @@ fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController
                         Text("Save")
                     }
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            uiState.isColorPickerDialogVisible
+        ) {
+            ColorPickerDialog(onColorSelected = {
+                viewModel.changeSelectedColor(it)
+                viewModel.switchVisibilityOfColorPicker()
+            }) {
+                viewModel.switchVisibilityOfColorPicker()
             }
         }
     }

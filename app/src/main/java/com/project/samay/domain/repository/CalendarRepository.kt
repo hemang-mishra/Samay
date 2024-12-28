@@ -6,6 +6,7 @@ import android.content.Context
 import android.provider.CalendarContract
 import android.util.Log
 import com.project.samay.data.source.local.calendar.CalendarDao
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
 import com.project.samay.domain.util.Preferences.NO_OF_DAYS_BEFORE
@@ -15,7 +16,7 @@ import java.util.TimeZone
 class CalendarRepository(private val calendarDao: CalendarDao) {
     val allSavedRoomEntries = calendarDao.getAllCalendarEvents()
 
-    fun addEvent(context: Context,calenderId: Long, title: String, description: String, startTime: Long, endTime: Long){
+    fun addEvent(context: Context,calenderId: Long, title: String, description: String, startTime: Long, endTime: Long, calendarColor: CalendarColor) {
         val values = ContentValues().apply {
             put(CalendarContract.Events.CALENDAR_ID, calenderId)
             put(CalendarContract.Events.TITLE, title)
@@ -23,7 +24,8 @@ class CalendarRepository(private val calendarDao: CalendarDao) {
             put(CalendarContract.Events.DTSTART, startTime)
             put(CalendarContract.Events.DTEND, endTime)
             put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
-            put(CalendarContract.Events.EVENT_COLOR, 0)
+            put(CalendarContract.Events.EVENT_COLOR, calendarColor.color.toString())
+            put(CalendarContract.Events.EVENT_COLOR_KEY, calendarColor.key)
 
         }
         context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
