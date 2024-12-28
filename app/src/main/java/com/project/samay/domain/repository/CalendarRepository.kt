@@ -23,12 +23,36 @@ class CalendarRepository(private val calendarDao: CalendarDao) {
             put(CalendarContract.Events.DTSTART, startTime)
             put(CalendarContract.Events.DTEND, endTime)
             put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
+            put(CalendarContract.Events.EVENT_COLOR, 0)
+
         }
         context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
     }
 //    CalendarContract.Events
 
+    fun fetchColors(context: Context){
+        val cursor = context.contentResolver.query(
+            CalendarContract.Colors.CONTENT_URI,
+            arrayOf(
+                CalendarContract.Colors.COLOR_KEY,
+                CalendarContract.Colors.COLOR,
+                CalendarContract.Colors.ACCOUNT_TYPE
+            ),
+            null,
+            null,
+            null
+        )
+        cursor?.use {
+            while (it.moveToNext()) {
+                Log.i("CalendarRepository", "fetchColors: key: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR_KEY))}")
+                Log.i("CalendarRepository", "fetchColors: color: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR))}")
+                Log.i("CalendarRepository", "fetchColors: type of account: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.ACCOUNT_TYPE))}")
+            }
+        }
+    }
+
     fun fetchCalendars(context: Context): List<CalendarType>{
+        fetchColors(context)
         val cursor = context.contentResolver.query(
             CalendarContract.Calendars.CONTENT_URI,
             arrayOf(

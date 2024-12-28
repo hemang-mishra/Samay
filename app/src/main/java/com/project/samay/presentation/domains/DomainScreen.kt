@@ -58,6 +58,9 @@ fun DomainScreen(domainViewModel: DomainViewModel, navController: NavController)
                         domainViewModel.selectDomain(it)
                     }
                 }
+                item{
+                    Spacer(modifier = Modifier.height(64.dp))
+                }
             }
         }
         FloatingActionButton(

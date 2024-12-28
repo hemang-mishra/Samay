@@ -2,6 +2,7 @@ package com.project.samay.presentation.calender
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,31 +42,36 @@ fun TimeSlotNote(allSlots: List<Pair<Long, Long>>, selectedSlots: List<Pair<Long
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             allSlots.forEach {
-                TimeSlotItem(it.first, it.second, it in selectedSlots)
+                TimeSlotItem(it.first, it.second, selectedSlots.contains(it)){
+                    onClickSlot(it)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryAppButton(modifier = Modifier.fillMaxWidth(), onClick = {
-
+                onSave()
             }, text = "Track", icon = Icons.AutoMirrored.Filled.Send)
         }
     }
 }
 
 @Composable
-fun TimeSlotItem(startTime: Long, endTime: Long, isSelected: Boolean = false) {
+fun TimeSlotItem(startTime: Long, endTime: Long, isSelected: Boolean = false, onClick: ()->Unit) {
     val start = TimeUtils.convertMillisToString(startTime)
     val end = TimeUtils.convertMillisToString(endTime)
     val relativeTimeDescription = TimeUtils.getRelativeTimeDescription(startTime)
 
-    val backgroundColor = if (!isSelected) CardDefaults.cardColors().containerColor.copy(alpha = 0.4f) else CardDefaults.cardColors().containerColor
+    val backgroundColor = if (!isSelected) CardDefaults.cardColors().containerColor.copy(alpha = 0.2f) else CardDefaults.cardColors().containerColor
     val textColor = if (!isSelected) CardDefaults.cardColors().contentColor.copy(alpha = 0.7f) else CardDefaults.cardColors().contentColor
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .clickable {
+                onClick()
+            }
         ,
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
@@ -93,7 +99,10 @@ fun PreviewTimeSlotNote() {
                 Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
                 Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
             ),
-            selectedSlots = listOf(),
+            selectedSlots = listOf(
+                Pair(System.currentTimeMillis(), TimeUtils.addMinutesToMillis(System.currentTimeMillis(),30)),
+
+                ),
             {}
         ){
 
