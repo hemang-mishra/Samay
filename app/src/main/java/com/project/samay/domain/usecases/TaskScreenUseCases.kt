@@ -71,7 +71,7 @@ class TaskScreenUseCases(
         end: Long,
         target: Long
     ) {
-        val contextApp = context as SamayApplication
+        val contextApp = context.applicationContext as SamayApplication
         val id = contextApp.readGoalCalendarFromDataStore(context).first()
         val newTaskEntity = taskEntity.copy(timeSpentInMin = taskEntity.timeSpentInMin + time)
         taskRepository.upsertTask(newTaskEntity)
@@ -97,7 +97,7 @@ class TaskScreenUseCases(
                 taskEntity.taskDescription,
                 start,
                 end,
-                CalendarColor.fromColor((domainEntity?.color) ?: taskEntity.domainColor)?: CalendarColor.KEY_1
+                contextApp.calendarColors.find { it.color == domainEntity?.color } ?: CalendarColor.default
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

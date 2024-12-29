@@ -1,7 +1,6 @@
 package com.project.samay.presentation.calender
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -32,17 +30,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +49,6 @@ import com.project.samay.domain.model.CalendarType
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.tasks.SelectDomainDialogue
 import com.project.samay.util.calculations.TimeUtils
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -68,63 +60,71 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
+                .padding(padding)
         ) {
-            val calenders by calendarViewModel.calendarType
             val context = LocalContext.current.applicationContext as SamayApplication
             val selectedCalendarIndex by context.readGoalCalendarFromDataStore(context)
                 .collectAsState(initial = null)
-            var isSelectDialogueVisible by remember {
-                mutableStateOf(false)
-            }
+
             val scope = rememberCoroutineScope()
             val uiState by calendarViewModel.calendarUIState
-//            var isDomainDialogVisible by remember {
-//                mutableStateOf(false)
-//            }
+
             val allDomains by calendarViewModel.allDomains.collectAsState(initial = emptyList())
-            val lazyColumnState= rememberLazyListState()
-
-
-            Column(modifier = Modifier.fillMaxSize()
-                .padding(start = 8.dp, end = 8.dp, top = 0.dp, bottom = 0.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 8.dp, end = 8.dp, top = 0.dp, bottom = 0.dp)
+            ) {
                 TopBarCalendar(
-                    modifier = Modifier.fillMaxHeight(0.3f),
+                    modifier = Modifier.fillMaxHeight(0.2f)
+                        .align(Alignment.Start),
                     calendarViewModel,
                     uiState.isFilterApplied
-                ){
+                ) {
                     calendarViewModel.resetAfterSaving(context)
                 }
                 LazyColumn {
                     item {
-                        AnimatedContent(uiState.isSearchComposableVisible) {
-                            if(it){
-                                SearchComposable(
-                                    query = uiState.queryText,
-                                    matchingNames = uiState.matchingNames,
-                                    selectedName = uiState.selectedName,
-                                    onSelectName = {calendarViewModel.onSelectDistinctName(it)},
-                                    onChangeQuery = {calendarViewModel.onChangeQuery(it)},
-                                    isConfirmPromptVisible = uiState.isConfirmModeActive,
-                                    generatedHistory = uiState.generatedHistoryToBeSaved,
-                                    onConfirm = {
-                                        calendarViewModel.onSelectConfirmButton(context)
-                                    },
-                                ) {
-                                    calendarViewModel.onSaveInSearchScreen(context)
-                                }
-                            }else{
-                                TimeSlotNote(uiState.allEmptySlots, uiState.selectedEmptySlots, {
-                                    calendarViewModel.onClickSlot(it)
-                                }) {
-                                    //Saving the selected slots
-                                    calendarViewModel.switchVisibilityOfSearchComposable()
+                        if (uiState.allEmptySlots.isNotEmpty())
+                            AnimatedContent(uiState.isSearchComposableVisible) {
+                                if (it) {
+                                    SearchComposable(
+                                        query = uiState.queryText,
+                                        matchingNames = uiState.matchingNames,
+                                        selectedName = uiState.selectedName,
+                                        onSelectName = { calendarViewModel.onSelectDistinctName(it) },
+                                        onChangeQuery = { calendarViewModel.onChangeQuery(it) },
+                                        isConfirmPromptVisible = uiState.isConfirmModeActive,
+                                        generatedHistory = uiState.generatedHistoryToBeSaved,
+                                        onConfirm = {
+                                            calendarViewModel.onSelectConfirmButton(context)
+                                        },
+                                    ) {
+                                        calendarViewModel.onSaveInSearchScreen(context)
+                                    }
+                                } else {
+                                    TimeSlotNote(
+                                        uiState.allEmptySlots,
+                                        uiState.selectedEmptySlots,
+                                        {
+                                            calendarViewModel.onClickSlot(it)
+                                        }) {
+                                        //Saving the selected slots
+                                        calendarViewModel.switchVisibilityOfSearchComposable()
+                                    }
                                 }
                             }
-                        }
                         Spacer(Modifier.height(16.dp))
 
+                    }
+                    item {
+                        if(uiState.events.isNotEmpty()){
+                            Text(
+                                text = "Events",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
                     items(uiState.events.size) { index: Int ->
                         val event = uiState.events[index]
@@ -141,49 +141,17 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                         }
                     }
 
-                    item {
-                        Text(text = "Select Calender for adding events")
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Current calender is: ${
-                                calendarViewModel.getCalenderAtIndex(
-                                    selectedCalendarIndex
-                                )?.displayName ?: "None"
-                            }"
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedCard(
-                            onClick = {
-                                isSelectDialogueVisible = true
-                            },
-                            modifier = Modifier
-                        ) {
-                            Text(text = "Select Calender", modifier = Modifier.padding(16.dp))
-                        }
-
-                        Spacer(Modifier.height(32.dp))
-                    }
                 }
             }
 
-            AnimatedVisibility(visible = isSelectDialogueVisible) {
-                CalenderDialogue(list = calenders) {
-                    Toast.makeText(context, it?.displayName, Toast.LENGTH_SHORT).show()
-                    if (it != null) {
-                        scope.launch {
-                            context.saveGoalCalendarToDataStore(context, it.id.toInt())
-                        }
-                    }
-                    isSelectDialogueVisible = false
-                }
-            }
+
             AnimatedVisibility(visible = uiState.isDomainDialogueVisible) {
                 SelectDomainDialogue(domains = allDomains) { domainEntity ->
                     calendarViewModel.selectDomain(domainEntity)
                     calendarViewModel.switchVisibilityOfDialogue()
-                    if(uiState.queryText.isNotEmpty()){
+                    if (uiState.queryText.isNotEmpty()) {
                         calendarViewModel.saveAfterDialogueGetsClosed(context)
-                    }else {
+                    } else {
                         calendarViewModel.approveEvent(context)
                     }
                 }
@@ -204,7 +172,10 @@ fun CalendarItem(
     val durationString =
         TimeUtils.convertTimeDurationToHoursAndMinutes(calendarEvent.dtend - calendarEvent.dtstart)
     // Validate color string
-    val profileColor = CalendarColor.getRandomColor()
+    val profileColor =
+        (context.applicationContext as SamayApplication).calendarColors.randomOrNull()
+            ?: CalendarColor.default
+
     Column(
         modifier = Modifier
             .animateContentSize()
@@ -277,28 +248,36 @@ fun CalendarItem(
 }
 
 @Composable
-fun TopBarCalendar(modifier: Modifier, viewModel: CalendarViewModel, isFilterEnabled: Boolean, onRefresh:()->Unit) {
+fun TopBarCalendar(
+    modifier: Modifier,
+    viewModel: CalendarViewModel,
+    isFilterEnabled: Boolean,
+    onRefresh: () -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Row(modifier = Modifier.align(Alignment.TopEnd)) {
-            Column {
-                BoldItalicText(text = "Filter")
-                Switch(checked = isFilterEnabled, onCheckedChange = viewModel::toggleFilter)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            IconButton(
-                {
-                    onRefresh()
-                }
-            ) {
-                Icon(Icons.Default.Refresh, contentDescription = null)
-            }
-        }
+
+//            IconButton(
+//                modifier = Modifier.align(Alignment.TopEnd),
+//                onClick =
+//                {
+//                    onRefresh()
+//                }
+//            ) {
+        Icon(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .clickable { onRefresh() },
+            imageVector =
+            Icons.Default.Refresh, contentDescription = null
+        )
+//            }
+
         Text(
-            text = "Add events from calendar", modifier = Modifier.align(Alignment.BottomStart),
+            text = "Manage Calendar", modifier = Modifier.align(Alignment.BottomStart),
             style = MaterialTheme.typography.headlineLarge
         )
     }
@@ -316,18 +295,18 @@ fun CalenderDialogue(list: List<CalendarType>, onSelect: (CalendarType?) -> Unit
                 .padding(16.dp)
         ) {
             LazyColumn {
-                items(list.size) { index->
+                items(list.size) { index ->
                     val it = list[index]
                     Text(
-                            text = it.displayName,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clickable {
-                                    onSelect(it)
-                                },
-                            style = MaterialTheme.typography.bodyMedium,
+                        text = it.displayName,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable {
+                                onSelect(it)
+                            },
+                        style = MaterialTheme.typography.bodyMedium,
 
-                            )
+                        )
 
                 }
             }

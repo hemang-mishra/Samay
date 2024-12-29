@@ -5,12 +5,15 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.CalendarContract
 import android.util.Log
+import androidx.core.graphics.toColorLong
+import com.project.samay.SamayApplication
 import com.project.samay.data.source.local.calendar.CalendarDao
 import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarType
 import com.project.samay.domain.util.Preferences.NO_OF_DAYS_BEFORE
 import com.project.samay.util.calculations.TimeUtils
+import kotlinx.coroutines.flow.first
 import java.util.TimeZone
 
 class CalendarRepository(private val calendarDao: CalendarDao) {
@@ -28,33 +31,52 @@ class CalendarRepository(private val calendarDao: CalendarDao) {
             put(CalendarContract.Events.EVENT_COLOR_KEY, calendarColor.key)
 
         }
+        Log.i("CalendarRepository", "addEvent: $values")
         context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
     }
 //    CalendarContract.Events
 
-    fun fetchColors(context: Context){
+    suspend fun fetchColors(context: Context): List<CalendarColor>{
+        val currentCalendar = (context.applicationContext as SamayApplication).readGoalCalendarFromDataStore(context)
+
+        if(currentCalendar.first() == null){
+            Log.i("CalendarRepository", "fetchColors: No calendar found")
+            return emptyList()
+        }
+        val accountName = getAccountNameFromCalendarId(context, currentCalendar.first()!!.toLong())
+        if(accountName == null){
+            Log.i("CalendarRepository", "fetchColors: No account name found")
+            return emptyList()
+        }
+        Log.i("CalendarRepository", "accountName: $accountName")
         val cursor = context.contentResolver.query(
             CalendarContract.Colors.CONTENT_URI,
             arrayOf(
                 CalendarContract.Colors.COLOR_KEY,
-                CalendarContract.Colors.COLOR,
-                CalendarContract.Colors.ACCOUNT_TYPE
+                CalendarContract.Colors.COLOR
             ),
-            null,
-            null,
+            "${CalendarContract.Colors.ACCOUNT_NAME} = ? AND ${CalendarContract.Colors.COLOR_TYPE} = ?",
+            arrayOf(accountName,1.toString()),
             null
         )
         cursor?.use {
+            val colors = mutableListOf<CalendarColor>()
             while (it.moveToNext()) {
-                Log.i("CalendarRepository", "fetchColors: key: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR_KEY))}")
-                Log.i("CalendarRepository", "fetchColors: color: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR))}")
-                Log.i("CalendarRepository", "fetchColors: type of account: ${it.getString(it.getColumnIndexOrThrow(CalendarContract.Colors.ACCOUNT_TYPE))}")
+                colors.add(
+                    CalendarColor(
+                        it.getInt(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR_KEY)),
+                        it.getInt(it.getColumnIndexOrThrow(CalendarContract.Colors.COLOR)).toLong()
+                    )
+                )
             }
+                Log.i("CalendarRepository", "fetchColors: $colors")
+            return colors
         }
+        return emptyList()
     }
 
     fun fetchCalendars(context: Context): List<CalendarType>{
-        fetchColors(context)
+
         val cursor = context.contentResolver.query(
             CalendarContract.Calendars.CONTENT_URI,
             arrayOf(
@@ -135,6 +157,28 @@ class CalendarRepository(private val calendarDao: CalendarDao) {
         }
 
         return emptyList()
+    }
+
+
+    private fun getAccountNameFromCalendarId(context: Context, calendarId: Long): String? {
+        val projection = arrayOf(CalendarContract.Calendars.ACCOUNT_NAME)
+        val selection = "${CalendarContract.Calendars._ID} = ?"
+        val selectionArgs = arrayOf(calendarId.toString())
+
+        val cursor = context.contentResolver.query(
+            CalendarContract.Calendars.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            null
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                return it.getString(it.getColumnIndexOrThrow(CalendarContract.Calendars.ACCOUNT_NAME))
+            }
+        }
+        return null
     }
 
 

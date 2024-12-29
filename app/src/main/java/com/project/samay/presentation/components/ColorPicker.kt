@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarColor
 
 @Composable
@@ -20,6 +22,7 @@ fun ColorPickerDialog(
     onColorSelected: (CalendarColor) -> Unit,
     onDismissRequest: () -> Unit
 ) {
+    val context = LocalContext.current.applicationContext as SamayApplication
     val scrollState = rememberScrollState()
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
@@ -30,7 +33,7 @@ fun ColorPickerDialog(
                 .verticalScroll(scrollState)) {
                 Text(text = "Pick a Color", style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(16.dp))
-                CalendarColor.values().forEach { calendarColor ->
+                context.calendarColors.forEach { calendarColor ->
                     ColorItem(
                         color = Color(calendarColor.color),
                         onClick = { onColorSelected(calendarColor) }
@@ -64,7 +67,7 @@ fun ColorPickerExample() {
 
         selectedColor?.let {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Selected Color: ${it.name}")
+            Text(text = "Selected Color: ${it.color}")
             Box(
                 modifier = Modifier
                     .size(40.dp)

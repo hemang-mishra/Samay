@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.project.samay.data.source.local.PreferencesKeys
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.presentation.di.appModules
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,6 +16,7 @@ import org.koin.core.context.startKoin
 class SamayApplication: Application() {
     val Context.dataStore by preferencesDataStore(name = "target")
     val Context.goalDataStore by preferencesDataStore(name= "goal_calendar")
+    var calendarColors: List<CalendarColor> = emptyList()
 
     override fun onCreate() {
         super.onCreate()

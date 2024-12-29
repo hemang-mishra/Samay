@@ -3,8 +3,8 @@ package com.project.samay.domain.model
 import androidx.compose.ui.graphics.Color
 
 
-fun main(){
-    println(Color(-5475746))
+fun main() {
+    println(Color(-1150626033565696))
     println(Color(-3118236))
     println(Color(-509406))
     println(Color(-370884))
@@ -20,47 +20,23 @@ fun main(){
 
 }
 
-enum class CalendarColor(val key: Int, val color: Long) {
-    KEY_1(1, -5475746),
-    KEY_2(2, -3118236),
-    KEY_3(3, -509406),
-    KEY_4(4, -370884),
-    KEY_5(5, -35529),
-    KEY_6(6, -21178),
-    KEY_7(7, -12396910),
-    KEY_8(8, -15292571),
-    KEY_9(9, -8662712),
-    KEY_10(10, -4989844),
-    KEY_11(11, -2350809),
-
-    KEY_12(12, -339611),
-    KEY_13(13, -7151168),
-    KEY_14(14, -6299161),
-    KEY_15(15, -6306073),
-    KEY_16(16, -11958553),
-    KEY_17(17, -6644481),
-    KEY_18(18, -4613377),
-    KEY_19(19, -4013374),
-
-
-    KEY_20(20, -3490369),
-    KEY_21(21, -3365204),
-
-    KEY_22(22, -12396910),
-    KEY_23(23, -618062),
-    KEY_24(24, -5997854);
-
-
+data class CalendarColor(
+    val key: Int, val color: Long
+) {
     companion object {
-        fun getRandomColor(): CalendarColor {
-            return entries.toTypedArray().random()
-        }
-        fun fromKey(key: Int): CalendarColor? {
-            return entries.find { it.key == key }
-        }
-
-        fun fromColor(color: Long): CalendarColor? {
-            return entries.find { it.color == color }
-        }
+        val default  = CalendarColor(6, -18312)
+//        val KEY_1 = CalendarColor(1, -5475746)
+//        val KEY_2 = CalendarColor(2, -3118236)
+//        val KEY_3 = CalendarColor(3, -509406)
+//        val KEY_4 = CalendarColor(4, -370884)
+//        val KEY_5 = CalendarColor(5, -35529)
+//        val KEY_6 = CalendarColor(6, -21178)
+//        val KEY_7 = CalendarColor(7, -12396910)
+//        val KEY_8 = CalendarColor(8, -15292571)
+//        val KEY_9 = CalendarColor(9, -8662712)
+//        val KEY_10 = CalendarColor(10, -4989844)
+//        val KEY_11 = CalendarColor(11, -2350809)
+//        val KEY_12 = CalendarColor(12, -3490369)
+//        val KEY_13 = CalendarColor(13, -3365204)
     }
 }

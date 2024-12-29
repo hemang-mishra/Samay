@@ -158,18 +158,18 @@ fun HistoryItem(
 @Preview
 @Composable
 fun PreviewHistoryScreen() {
-    val history = listOf(
-        HistoryEntity(
-            1,
-            "Work",
-            "Work",
-            TimeUtils.addMinutesToMillis(timeInMinutes = -180),
-            TimeUtils.addMinutesToMillis(timeInMinutes = -120),
-            1,
-            CalendarColor.getRandomColor().color,
-            "Work",
-        )
-    )
-    HistoryScreen(history, history.get(0), {}) { }
+//    val history = listOf(
+//        HistoryEntity(
+//            1,
+//            "Work",
+//            "Work",
+//            TimeUtils.addMinutesToMillis(timeInMinutes = -180),
+//            TimeUtils.addMinutesToMillis(timeInMinutes = -120),
+//            1,
+//            CalendarColor.getRandomColor().color,
+//            "Work",
+//        )
+//    )
+//    HistoryScreen(history, history.get(0), {}) { }
 
 }
