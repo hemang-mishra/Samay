@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.Destinations
 import com.project.samay.presentation.HomeScreen
@@ -84,6 +85,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+
     override fun onStart() {
         super.onStart()
         Intent(
@@ -93,6 +96,10 @@ class MainActivity : ComponentActivity() {
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
         Log.i("check", "On start")
+
+        calendarViewModel.fetchColors(this){
+            (this.application as SamayApplication).calendarColors = it
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,7 +171,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<Destinations.SettingsScreen> {
-                            SettingsScreen(monitorViewModel = usageViewModel)
+                            SettingsScreen(monitorViewModel = usageViewModel, calendarViewModel = calendarViewModel)
                         }
 
                         composable<Destinations.HistoryScreen> {
@@ -226,5 +233,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
 }

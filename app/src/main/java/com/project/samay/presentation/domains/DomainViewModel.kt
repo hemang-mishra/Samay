@@ -6,6 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.usecases.DomainScreenUseCases
@@ -50,12 +51,12 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases) : 
         return totalPercent + (time ?: 0.0f) - oldDomainPercent
     }
 
-    fun selectDomain(domainEntity: DomainEntity) {
+    fun selectDomain(context: Context, domainEntity: DomainEntity) {
         if (uiState.value.selectedDomain == domainEntity) {
             uiState.value = uiState.value.copy(selectedDomain = null)
             return
         }
-        uiState.value = uiState.value.copy(selectedDomain = domainEntity, selectedColor = CalendarColor.entries.find { it.color == domainEntity.color } ?: CalendarColor.KEY_1)
+        uiState.value = uiState.value.copy(selectedDomain = domainEntity, selectedColor = (context.applicationContext as SamayApplication).calendarColors.find { it.color == domainEntity.color } ?: CalendarColor.default)
     }
 
     fun saveNewDomain(

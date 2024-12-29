@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import java.util.Locale
 
 @Composable
 fun DomainScreen(domainViewModel: DomainViewModel, navController: NavController) {
+    val context = LocalContext.current
     val domains by domainViewModel.allDomains.collectAsState(initial = emptyList())
     val uiState by domainViewModel.uiStateValue
     Box(modifier = Modifier.fillMaxSize()) {
@@ -55,7 +57,7 @@ fun DomainScreen(domainViewModel: DomainViewModel, navController: NavController)
             ) {
                 itemsIndexed(domains) { _, it ->
                     DomainItem(domain = it, isSelected = uiState.selectedDomain == it, viewModel = domainViewModel, navController = navController){
-                        domainViewModel.selectDomain(it)
+                        domainViewModel.selectDomain(context = context, it)
                     }
                 }
                 item{

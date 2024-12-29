@@ -5,6 +5,6 @@ import com.project.samay.domain.model.DomainEntity
 
 data class DomainUiState(
     val selectedDomain: DomainEntity? = null,
-    val selectedColor: CalendarColor = CalendarColor.KEY_1,
+    val selectedColor: CalendarColor = CalendarColor.default,
     val isColorPickerDialogVisible: Boolean = false,
 )

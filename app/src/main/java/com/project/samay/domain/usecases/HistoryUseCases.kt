@@ -3,6 +3,7 @@ package com.project.samay.domain.usecases
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.project.samay.MainActivity
 import com.project.samay.SamayApplication
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.HistoryRepository
@@ -36,7 +37,7 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
         context: Context,
         historyEntity: HistoryEntity
     ) {
-        val contextApp = context as SamayApplication
+        val contextApp = context.applicationContext as SamayApplication
         val time = (historyEntity.end - historyEntity.start) / 1000 / 60
         val id = contextApp.readGoalCalendarFromDataStore(context).first()
         val domainEntity = domainRepository.allDomains.first().find { it.id == historyEntity.domainEntityId }
@@ -61,7 +62,7 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
                 historyEntity.description,
                 historyEntity.start,
                 historyEntity.end,
-                CalendarColor.fromColor((domainEntity?.color) ?: historyEntity.domainColor)?:CalendarColor.KEY_1
+                contextApp.calendarColors.find { it.color == domainEntity?.color } ?: CalendarColor.default
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

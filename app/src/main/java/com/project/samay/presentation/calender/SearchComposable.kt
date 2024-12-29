@@ -55,7 +55,7 @@ fun SearchComposable(
             onChangeQuery(it)
         }
         Spacer(Modifier.height(16.dp))
-        BoldItalicText(text = if(isConfirmPromptVisible) "The slots are:" else "Matching Names", fontSize = 24)
+        BoldItalicText(text = if(isConfirmPromptVisible) "The slots are:" else "Matching Names", fontSize = 14)
         Spacer(Modifier.height(16.dp))
         AnimatedContent(isConfirmPromptVisible) {
             if(it){

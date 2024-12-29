@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.samay.data.repository.HistoryRepository
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.CalendarEventStatus
@@ -43,6 +44,12 @@ class CalendarViewModel(
     fun switchVisibilityOfDialogue() {
         _calendarUIState.value =
             _calendarUIState.value.copy(isDomainDialogueVisible = !_calendarUIState.value.isDomainDialogueVisible)
+    }
+
+    fun fetchColors(context: Context, afterSuccess: (List<CalendarColor>)->Unit){
+        viewModelScope.launch {
+            afterSuccess(calendarRepository.fetchColors(context))
+        }
     }
 
     fun refresh(context: Context) {

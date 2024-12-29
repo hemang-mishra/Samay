@@ -31,14 +31,13 @@ fun TimeSlotNote(allSlots: List<Pair<Long, Long>>, selectedSlots: List<Pair<Long
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(8.dp)
         ) {
             Text(
                 text = "What you did in these time slots?",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             allSlots.forEach {
@@ -68,7 +67,7 @@ fun TimeSlotItem(startTime: Long, endTime: Long, isSelected: Boolean = false, on
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(vertical = 8.dp)
             .clickable {
                 onClick()
             }
