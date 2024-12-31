@@ -18,6 +18,10 @@ class HistoryRepository(private val dao: HistoryDAO) {
         ))
     }
 
+    suspend fun upsertHistory(historyEntity: HistoryEntity){
+        dao.upsertHistory(historyEntity)
+    }
+
     suspend fun deleteHistory(historyEntity: HistoryEntity){
         dao.deleteHistory(historyEntity = historyEntity)
     }
@@ -29,4 +33,8 @@ class HistoryRepository(private val dao: HistoryDAO) {
     fun getAllHistory()=dao.getAllHistory()
 
     fun getDistinctNames()=dao.getDistinctNames()
+
+    suspend fun deleteAllHistory(){
+        dao.deleteAllHistory()
+    }
 }

@@ -23,4 +23,6 @@ data class DomainEntity(
     val expectedPercentage: Float,
     val presentPercentage: Float,
     val color: Long
-): Parcelable
+): Parcelable{
+    constructor() : this(0, 0, 0.0f, "", "", "", 0.0f, 0.0f, 0)
+}

@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class NavigationDrawerItems(val title: String, val icon: ImageVector) {
-    BACKUP("Backup", Icons.Default.Backup),
     SETTINGS("Settings", Icons.Default.Settings),
     HISTORY("History", Icons.Default.History),
 }

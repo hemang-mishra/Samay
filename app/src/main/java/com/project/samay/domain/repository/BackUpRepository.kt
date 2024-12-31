@@ -1,117 +1,141 @@
-import android.content.ContentValues
-import android.content.Context
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.widget.Toast
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+package com.project.samay.domain.repository
 
-class BackUpRepository {
-    fun backupDatabase(context: Context) {
-        val resolver = context.contentResolver
-        val dbFile = File(context.getDatabasePath("samay_database").absolutePath)
+import com.google.android.gms.common.api.Response
+import com.google.firebase.firestore.FirebaseFirestore
+import com.project.samay.domain.model.DomainEntity
+import com.project.samay.domain.model.HistoryEntity
+import com.project.samay.domain.model.ResponseError
+import com.project.samay.util.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-        if (!dbFile.exists()) {
-            Toast.makeText(context, "Database file not found", Toast.LENGTH_SHORT).show()
-            return
-        }
+class BackUpRepository() {
+    private val db = FirebaseFirestore.getInstance()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // For Android 10 (API level 29) and above
-            val values = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, "samay_database_backup.db")
-                put(MediaStore.MediaColumns.MIME_TYPE, "application/x-sqlite3")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "Documents/DatabaseBackups")
-            }
-
-            val uri: Uri? = resolver.insert(MediaStore.Files.getContentUri("external"), values)
-
-            uri?.let {
-                resolver.openOutputStream(it).use { outputStream ->
-                    FileInputStream(dbFile).use { inputStream ->
-                        val buffer = ByteArray(1024)
-                        var length: Int
-                        while (inputStream.read(buffer).also { length = it } > 0) {
-                            outputStream?.write(buffer, 0, length)
-                        }
-                    }
+    suspend fun uploadDomains(domains: List<DomainEntity>): Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try{
+                for(domain in domains){
+                    db
+                        .collection("samay")
+                        .document("domains")
+                        .collection("domains")
+                        .document(domain.id.toString())
+                        .set(domain)
+                        .await()
                 }
-                Toast.makeText(context, "Backup successful", Toast.LENGTH_SHORT).show()
-            } ?: run {
-                Toast.makeText(context, "Backup failed", Toast.LENGTH_SHORT).show()
+                Resource.success(true)
+            }catch (e: Exception){
+                val error= ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
             }
-        } else {
-            // For devices running Android 12 and below
-            val backupDir = File(context.getExternalFilesDir(null), "Documents/DatabaseBackups")
-            if (!backupDir.exists()) {
-                backupDir.mkdirs()
-            }
-            val backupFile = File(backupDir, "samay_database_backup.db")
-
-            // Always create a new backup file, overwriting if it exists
-            FileInputStream(dbFile).use { input ->
-                FileOutputStream(backupFile, false).use { output ->
-                    val buffer = ByteArray(1024)
-                    var length: Int
-                    while (input.read(buffer).also { length = it } > 0) {
-                        output.write(buffer, 0, length)
-                    }
-                }
-            }
-            Toast.makeText(context, "Backup successful", Toast.LENGTH_SHORT).show()
         }
     }
 
-    fun restoreDatabase(context: Context) {
-        val resolver = context.contentResolver
-        val dbFile = File(context.getDatabasePath("samay_database").absolutePath)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val projection = arrayOf(MediaStore.MediaColumns._ID)
-            val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
-            val selectionArgs = arrayOf("samay_database_backup.db")
-            val cursor = resolver.query(MediaStore.Files.getContentUri("external"), projection, selection, selectionArgs, null)
-
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
-                    val uri = MediaStore.Files.getContentUri("external").buildUpon().appendPath(id.toString()).build()
-
-                    resolver.openInputStream(uri)?.use { inputStream ->
-                        FileOutputStream(dbFile).use { outputStream ->
-                            val buffer = ByteArray(1024)
-                            var length: Int
-                            while (inputStream.read(buffer).also { length = it } > 0) {
-                                outputStream.write(buffer, 0, length)
-                            }
-                        }
-                        Toast.makeText(context, "Restore successful", Toast.LENGTH_SHORT).show()
-                    } ?: run {
-                        Toast.makeText(context, "Restore failed", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(context, "No backup found", Toast.LENGTH_SHORT).show()
-                }
-            }
-        } else {
-            // Fallback for devices running Android 12 and below
-            val backupFile = File(context.getExternalFilesDir(null), "Documents/DatabaseBackups/samay_database_backup.db")
-            if (backupFile.exists()) {
-                FileInputStream(backupFile).use { input ->
-                    FileOutputStream(dbFile).use { output ->
-                        val buffer = ByteArray(1024)
-                        var length: Int
-                        while (input.read(buffer).also { length = it } > 0) {
-                            output.write(buffer, 0, length)
-                        }
-                    }
-                }
-                Toast.makeText(context, "Restore successful", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Backup file not found", Toast.LENGTH_SHORT).show()
+    suspend fun fetchDomains(): Resource<List<DomainEntity>>{
+        return withContext(Dispatchers.IO){
+            try{
+                val querySnapshot = db
+                    .collection("samay")
+                    .document("domains")
+                    .collection("domains")
+                    .get()
+                    .await()
+                val domains = querySnapshot.toObjects(DomainEntity::class.java)
+                Resource.success(domains)
+            }catch (e: Exception){
+                val error = ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
             }
         }
     }
+
+    suspend fun deleteAllDomainsFromFirebase(): Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try{
+                db
+                    .collection("samay")
+                    .document("domains")
+                    .collection("domains")
+                    .get()
+                    .await()
+                    .documents
+                    .forEach {
+                        it.reference.delete().await()
+                    }
+                Resource.success(true)
+            }catch (e: Exception){
+                val error = ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
+            }
+        }
+    }
+
+    suspend fun uploadHistory(history: List<HistoryEntity>): Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try{
+                for(h in history){
+                    db
+                        .collection("samay")
+                        .document("history")
+                        .collection("history")
+                        .document(h.hId.toString())
+                        .set(h)
+                        .await()
+                }
+                Resource.success(true)
+            }catch (e: Exception){
+                val error = ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
+            }
+        }
+    }
+
+    suspend fun fetchHistory(): Resource<List<HistoryEntity>>{
+        return withContext(Dispatchers.IO){
+            try{
+                val querySnapshot = db
+                    .collection("samay")
+                    .document("history")
+                    .collection("history")
+                    .get()
+                    .await()
+                val history = querySnapshot.toObjects(HistoryEntity::class.java)
+                Resource.success(history)
+            }catch (e: Exception){
+                val error = ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
+            }
+        }
+    }
+
+    suspend fun deleteAllHistoryFromFirebase(): Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try{
+                db
+                    .collection("samay")
+                    .document("history")
+                    .collection("history")
+                    .get()
+                    .await()
+                    .documents
+                    .forEach {
+                        it.reference.delete().await()
+                    }
+                Resource.success(true)
+            }catch (e: Exception){
+                val error = ResponseError.UNKNOWN
+                error.actualResponse = e.message
+                Resource.failure(error = ResponseError.UNKNOWN)
+            }
+        }
+    }
+
+
 }

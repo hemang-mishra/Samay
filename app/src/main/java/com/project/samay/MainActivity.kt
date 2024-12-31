@@ -27,7 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.project.samay.domain.backup.BackupRepo
 import com.project.samay.domain.model.CalendarColor
+import com.project.samay.domain.repository.BackUpRepository
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.Destinations
 import com.project.samay.presentation.HomeScreen
@@ -51,6 +53,7 @@ import com.project.samay.presentation.onboarding.OnboardingScreen
 import com.project.samay.presentation.onboarding.OnboardingViewModel
 import com.project.samay.presentation.onboarding.PermissionsRequired
 import com.project.samay.presentation.settings.SettingsScreen
+import com.project.samay.presentation.settings.SettingsViewModel
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
 import com.project.samay.presentation.tasks.NavTargetScreen
@@ -59,6 +62,10 @@ import com.project.samay.presentation.tasks.TargetScreen
 import com.project.samay.presentation.tasks.TaskViewModel
 import com.project.samay.presentation.tasks.UseTaskScreen
 import com.project.samay.ui.theme.SamayTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.util.Locale
 
@@ -70,6 +77,7 @@ class MainActivity : ComponentActivity() {
     private val meditateViewModel by inject<MeditateViewModel>()
     private val historyViewModel by inject<HistoryViewModel>()
     private val onboardingViewModel by inject<OnboardingViewModel>()
+    private val settingsViewModel by inject<SettingsViewModel>()
 
     private var isBound by mutableStateOf(false)
     private lateinit var stopwatchService: StopwatchService
@@ -97,9 +105,7 @@ class MainActivity : ComponentActivity() {
         }
         Log.i("check", "On start")
 
-        calendarViewModel.fetchColors(this){
-            (this.application as SamayApplication).calendarColors = it
-        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +115,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             if (isBound) {
                 val navController = rememberNavController()
-                calendarViewModel.fetchCalenders(this@MainActivity)
+
                 SamayTheme(darkTheme = true) {
 
                     NavHost(
@@ -120,6 +126,10 @@ class MainActivity : ComponentActivity() {
                             OnboardingScreen(onboardingViewModel, navController)
                         }
                         composable<NavHomeScreen> {
+                            calendarViewModel.fetchCalenders(this@MainActivity)
+                            calendarViewModel.fetchColors(this@MainActivity){
+                                (this@MainActivity.application as SamayApplication).calendarColors = it
+                            }
                             HomeScreen(
                                 domainViewModel,
                                 taskViewModel,
@@ -171,7 +181,11 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<Destinations.SettingsScreen> {
-                            SettingsScreen(monitorViewModel = usageViewModel, calendarViewModel = calendarViewModel)
+                            SettingsScreen(
+                                monitorViewModel = usageViewModel,
+                                calendarViewModel = calendarViewModel,
+                                settingsViewModel = settingsViewModel
+                            )
                         }
 
                         composable<Destinations.HistoryScreen> {
@@ -184,6 +198,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
 
     override fun onStop() {
