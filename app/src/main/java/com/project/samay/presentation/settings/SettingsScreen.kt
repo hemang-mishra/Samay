@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -37,7 +38,7 @@ import com.project.samay.ui.theme.spacing
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: CalendarViewModel){
+fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: CalendarViewModel, settingsViewModel: SettingsViewModel){
     val calenders by calendarViewModel.calendarType
     val context = LocalContext.current.applicationContext as SamayApplication
     val selectedCalendarIndex by context.readGoalCalendarFromDataStore(context)
@@ -60,6 +61,12 @@ fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: Calend
             )?.displayName ?: "None",
             onSelectCalendarClick = {
                 isSelectDialogueVisible = true
+            },
+            onBackUpButtonClick = {
+                settingsViewModel.backupDomainsAndHistory()
+            },
+            onRestoreButtonClick = {
+                settingsViewModel.fetchDomainsAndHistory()
             }
         )
 //        Box(
@@ -92,7 +99,9 @@ private fun PrimarySettingsScreen(
     filterResults: Boolean,
     onFilterResultsChange: (Boolean) -> Unit,
     selectedCalendar: String,
-    onSelectCalendarClick: () -> Unit
+    onSelectCalendarClick: () -> Unit,
+    onBackUpButtonClick: () -> Unit,
+    onRestoreButtonClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -125,7 +134,7 @@ private fun PrimarySettingsScreen(
             onCheckedChange = onFilterResultsChange
         )
 
-        Divider(modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
         // Selected Calendar
         SettingsItemWithAction(
@@ -133,6 +142,18 @@ private fun PrimarySettingsScreen(
             value = selectedCalendar,
             onClick = onSelectCalendarClick
         )
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        SettingsItemWithButton("Backup Data") {
+            onBackUpButtonClick()
+        }
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        SettingsItemWithButton("Restore Data") {
+            onRestoreButtonClick()
+        }
     }
 }
 
@@ -157,6 +178,30 @@ fun SettingsItemWithSwitch(
             checked = isChecked,
             onCheckedChange = onCheckedChange
         )
+    }
+}
+
+@Composable
+fun SettingsItemWithButton(
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = MaterialTheme.spacing.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        OutlinedButton(
+            onClick = onClick
+        ) {
+            Text(title)
+        }
     }
 }
 

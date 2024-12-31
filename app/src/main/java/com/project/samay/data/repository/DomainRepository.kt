@@ -87,4 +87,8 @@ class DomainRepository(private val domainDao: DomainDao) {
             domainDao.upsertDomain(domainEntity)
         }
     }
+
+    suspend fun deleteAllDomains() = withContext(Dispatchers.IO) {
+        domainDao.deleteAllDomains()
+    }
 }

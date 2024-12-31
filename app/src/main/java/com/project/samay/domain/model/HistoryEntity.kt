@@ -16,4 +16,7 @@ data class HistoryEntity(
     val domainEntityId: Int,
     val domainColor: Long,
     val domainName: String
-)
+
+){
+    constructor(): this(0, "", "", 0, 0, 0, 0, "")
+}

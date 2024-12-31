@@ -20,4 +20,7 @@ interface DomainDao {
 
     @Query("SELECT * FROM DomainEntity WHERE id = :domainId")
     suspend fun getDomainById(domainId: Int): DomainEntity?
+
+    @Query("DELETE FROM DomainEntity")
+    suspend fun deleteAllDomains()
 }

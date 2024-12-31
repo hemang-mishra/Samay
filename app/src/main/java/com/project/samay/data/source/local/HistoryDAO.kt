@@ -22,4 +22,7 @@ interface HistoryDAO {
 
     @Query("SELECT DISTINCT name,description,domainEntityId,domainColor,domainName FROM HistoryEntity")
     fun getDistinctNames(): Flow<List<DistinctNames>>
+
+    @Query("DELETE FROM HistoryEntity")
+    suspend fun deleteAllHistory()
 }
