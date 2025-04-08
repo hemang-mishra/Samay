@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -25,6 +28,11 @@ android {
     }
 
     buildTypes {
+        debug {
+
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
