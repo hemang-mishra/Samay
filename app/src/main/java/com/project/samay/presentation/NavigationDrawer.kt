@@ -26,9 +26,9 @@ fun NavigationDrawerContent(navController: NavController) {
                     modifier = Modifier
                 ) {
                     when (NavigationDrawerItems.entries[index]) {
-                        NavigationDrawerItems.BACKUP -> {
-                            navController.navigate(Destinations.BackupScreen)
-                        }
+//                        NavigationDrawerItems.BACKUP -> {
+//                            navController.navigate(Destinations.BackupScreen)
+//                        }
 
                         NavigationDrawerItems.SETTINGS -> {
                             navController.navigate(Destinations.SettingsScreen)

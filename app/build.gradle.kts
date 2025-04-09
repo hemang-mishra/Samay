@@ -29,11 +29,11 @@ android {
     }
 
     buildTypes {
-        debug {
-
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = ".debug"
-        }
+//        debug {
+//
+//            applicationIdSuffix = ".debug"
+//            versionNameSuffix = ".debug"
+//        }
         release {
             isMinifyEnabled = false
             proguardFiles(

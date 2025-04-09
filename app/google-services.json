@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:182365067642:android:0674cb08e2117f3f569ec3",
+        "mobilesdk_app_id": "1:182365067642:android:be6580c7aa2a0e10569ec3",
         "android_client_info": {
-          "package_name": "com.iiitdmj.ecell"
+          "package_name": "com.hexagraph.pattagobhi"
         }
       },
       "oauth_client": [
@@ -81,28 +81,12 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:182365067642:android:dc06b245c8d41e36569ec3",
+        "mobilesdk_app_id": "1:182365067642:android:a035f87b433820d6569ec3",
         "android_client_info": {
-          "package_name": "com.project.pattagobhi"
+          "package_name": "com.project.samay"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "182365067642-38gtapgkqleosht4pl20k8hpqll7ovas.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.project.pattagobhi",
-            "certificate_hash": "55fb51f1e3bfc03d6224968b73830bcc5c1e5eaf"
-          }
-        },
-        {
-          "client_id": "182365067642-d4dkb8fvcverb8h5ge7do4d0lns2th1k.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.project.pattagobhi",
-            "certificate_hash": "b7b0804cda2596cf3daa178742bfac9677b295e0"
-          }
-        },
         {
           "client_id": "182365067642-8jgfim6fvi17unvvqqvpb5hstt5i45fr.apps.googleusercontent.com",
           "client_type": 3
@@ -126,9 +110,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:182365067642:android:a035f87b433820d6569ec3",
+        "mobilesdk_app_id": "1:182365067642:android:2fcf236be095442e569ec3",
         "android_client_info": {
-          "package_name": "com.project.samay"
+          "package_name": "com.project.samay.debug"
         }
       },
       "oauth_client": [

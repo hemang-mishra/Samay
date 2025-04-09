@@ -48,6 +48,8 @@ import kotlinx.serialization.Serializable
 
 enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon: ImageVector) {
     CALENDAR("Calendar", Icons.Outlined.CalendarToday, Icons.Default.CalendarToday),
+    APPS("Apps", Icons.Outlined.Apps, Icons.Default.Apps),
+    DOMAINS("Domains", Icons.Outlined.Category, Icons.Default.Category),
     FOCUS(
         "Focus",
         Icons.Outlined.Watch,
@@ -57,9 +59,7 @@ enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon
         "Tasks",
         Icons.Outlined.Task,
         Icons.Default.Task,
-    ),
-    APPS("Apps", Icons.Outlined.Apps, Icons.Default.Apps),
-    DOMAINS("Domains", Icons.Outlined.Category, Icons.Default.Category),
+    )
 }
 
 @Serializable

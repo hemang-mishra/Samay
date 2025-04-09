@@ -150,7 +150,7 @@ class CalendarViewModel(
 
     fun getEmptySlots(){
         val events = _calendarUIState.value.events
-        _calendarUIState.value = _calendarUIState.value.copy(allEmptySlots = CalendarTrackerUtil.fetchEmptyTimeSlots(events))
+        _calendarUIState.value = _calendarUIState.value.copy(allEmptySlots = CalendarTrackerUtil.fetchEmptyTimeSlots(events).sortedByDescending { it.first })
     }
 
 
