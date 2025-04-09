@@ -4,6 +4,6 @@ data class DistinctNames(
     val name: String,
     val description: String,
     val domainEntityId: Int,
-    val domainColor: Long,
+    val productivityColor: Long,
     val domainName: String
 )

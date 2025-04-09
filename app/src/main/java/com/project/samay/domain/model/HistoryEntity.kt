@@ -14,7 +14,7 @@ data class HistoryEntity(
     val start: Long,
     val end: Long,
     val domainEntityId: Int,
-    val domainColor: Long,
+    val productivityColor: Long,
     val domainName: String
 
 ){

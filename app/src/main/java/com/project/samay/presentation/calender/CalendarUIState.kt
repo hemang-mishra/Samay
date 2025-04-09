@@ -1,5 +1,6 @@
 package com.project.samay.presentation.calender
 
+import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.DistinctNames
@@ -26,5 +27,8 @@ data class CalendarUIState(
     val selectedName: DistinctNames? = null,
 
     val generatedHistoryToBeSaved: MutableList<HistoryEntity> = mutableListOf<HistoryEntity>(),
-    val isConfirmModeActive: Boolean = false
+    val isConfirmModeActive: Boolean = false,
+
+    val isProductivityBottomSheetVisible: Boolean = false,
+    val selectedProductivityColor: CalendarColor = CalendarColor.default,
 )

@@ -20,7 +20,7 @@ interface HistoryDAO {
     @Query("SELECT * FROM HistoryEntity ORDER BY start DESC")
     fun getAllHistory(): Flow<List<HistoryEntity>>
 
-    @Query("SELECT DISTINCT name,description,domainEntityId,domainColor,domainName FROM HistoryEntity")
+    @Query("SELECT DISTINCT name,description,domainEntityId,productivityColor,domainName FROM HistoryEntity")
     fun getDistinctNames(): Flow<List<DistinctNames>>
 
     @Query("DELETE FROM HistoryEntity")

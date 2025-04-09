@@ -96,7 +96,7 @@ fun HistoryItem(
             Icon(
                 imageVector = Icons.Default.Category,
                 contentDescription = null,
-                tint = Color(historyEntity.domainColor),
+                tint = Color(historyEntity.productivityColor),
                 modifier = Modifier
                     .align(Alignment.Top)
                     .width(24.dp)

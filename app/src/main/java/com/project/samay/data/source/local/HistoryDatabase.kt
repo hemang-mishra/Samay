@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.domain.model.HistoryEntity
 
-@Database(entities = [HistoryEntity::class], version = 1, exportSchema = false)
+@Database(entities = [HistoryEntity::class], version = 2, exportSchema = false)
 abstract class HistoryDatabase : RoomDatabase(){
     abstract fun historyDao(): HistoryDAO
 

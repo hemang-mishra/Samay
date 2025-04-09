@@ -119,7 +119,7 @@ fun SearchItem(distinctNames: DistinctNames, isSelected: Boolean, onClick: () ->
         ) {
             Icon(
                 imageVector = Icons.Default.Category, contentDescription = null,
-                tint = Color(distinctNames.domainColor),
+                tint = Color(distinctNames.productivityColor),
                 modifier = Modifier
                     .align(Alignment.Top)
                     .width(24.dp)
