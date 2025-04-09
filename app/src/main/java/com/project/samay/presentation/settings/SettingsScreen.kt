@@ -1,16 +1,17 @@
 package com.project.samay.presentation.settings
 
+import ProductivityComposable
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Divider
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -18,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,13 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.project.samay.SamayApplication
+import com.project.samay.domain.util.Preferences
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderDialogue
+import com.project.samay.presentation.components.ColorPickerDialog
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.ui.theme.spacing
+import com.project.samay.util.ProductivityColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,7 +49,8 @@ fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: Calend
     var isSelectDialogueVisible by remember {
         mutableStateOf(false)
     }
-    val scope = rememberCoroutineScope()
+    val uiState by settingsViewModel.uiState.collectAsState()
+   val scope = rememberCoroutineScope()
     Scaffold() {
         it
         PrimarySettingsScreen(
@@ -67,17 +69,12 @@ fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: Calend
             },
             onRestoreButtonClick = {
                 settingsViewModel.fetchDomainsAndHistory()
+            },
+            onClickLevel = {
+                settingsViewModel.onSelectLevel(it)
+                settingsViewModel.onToggleVisibilityOfProductivityColorDialog()
             }
         )
-//        Box(
-//            Modifier.fillMaxSize()
-//                .padding(it)
-//        ) {
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//                Text("Emergency mode", modifier = Modifier.weight(1f))
-//                Switch(isEmergency, onCheckedChange = monitorViewModel::toggleEmergency)
-//            }
-//        }
         AnimatedVisibility(visible = isSelectDialogueVisible) {
             CalenderDialogue(list = calenders) {
                 Toast.makeText(context, it?.displayName, Toast.LENGTH_SHORT).show()
@@ -88,6 +85,20 @@ fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: Calend
                 }
                 isSelectDialogueVisible = false
             }
+        }
+
+        AnimatedVisibility(visible = uiState.isColorPickerForSettingsVisible) {
+            ColorPickerDialog(
+                onColorSelected = {
+                    settingsViewModel.onSetColor(it, context)
+                    settingsViewModel.onToggleVisibilityOfProductivityColorDialog()
+                    settingsViewModel.onSelectLevel(null)
+                },
+                onDismissRequest = {
+                    settingsViewModel.onToggleVisibilityOfProductivityColorDialog()
+                    settingsViewModel.onSelectLevel(null)
+                }
+            )
         }
     }
 }
@@ -101,13 +112,15 @@ private fun PrimarySettingsScreen(
     selectedCalendar: String,
     onSelectCalendarClick: () -> Unit,
     onBackUpButtonClick: () -> Unit,
-    onRestoreButtonClick: () -> Unit
+    onRestoreButtonClick: () -> Unit,
+    onClickLevel: (String)->Unit
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .padding(MaterialTheme.spacing.medium)
+            .verticalScroll(scrollState)
     ) {
         // Header
         Text(
@@ -154,6 +167,15 @@ private fun PrimarySettingsScreen(
         SettingsItemWithButton("Restore Data") {
             onRestoreButtonClick()
         }
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        ProductivityComposable(
+            heading = "Edit Color Preferences",
+            onClick = {level, _ ->
+                onClickLevel(level)
+            }
+        )
     }
 }
 

@@ -29,11 +29,11 @@ android {
     }
 
     buildTypes {
-//        debug {
-//
-//            applicationIdSuffix = ".debug"
-//            versionNameSuffix = ".debug"
-//        }
+        debug {
+
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -109,11 +109,6 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
-
-    implementation("androidx.media3:media3-exoplayer:1.4.1")
-    implementation("androidx.media3:media3-ui:1.4.1")
-    implementation("androidx.media3:media3-common:1.4.1")
-    implementation("androidx.media3:media3-session:1.4.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
 
 }

@@ -4,5 +4,7 @@ import com.project.samay.domain.model.ResponseError
 
 data class SettingsUIState(
     val isLoading: Boolean = true,
-    val error: ResponseError? = null
+    val error: ResponseError? = null,
+    val isColorPickerForSettingsVisible: Boolean = false,
+    val selectedProductivityLevel: String? = null
 )

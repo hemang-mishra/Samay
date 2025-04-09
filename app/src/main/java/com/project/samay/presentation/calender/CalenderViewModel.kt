@@ -214,7 +214,7 @@ class CalendarViewModel(
                         description = selectedName.description,
                         domainEntityId = selectedName.domainEntityId,
                         domainName = selectedName.domainName,
-                        domainColor = selectedName.domainColor,
+                        productivityColor = _calendarUIState.value.selectedProductivityColor.color,
                         hId =0
                     )
                 )
@@ -245,7 +245,7 @@ class CalendarViewModel(
                         description = "",
                         domainEntityId = selectedDomain.id,
                         domainName = selectedDomain.name,
-                        domainColor = selectedDomain.color,
+                        productivityColor = _calendarUIState.value.selectedProductivityColor.color,
                         hId = 0
                     )
                 )
@@ -287,10 +287,19 @@ class CalendarViewModel(
             selectedDomain = null,
             selectedName = null,
             queryText = "",
-            generatedHistoryToBeSaved = mutableListOf()
+            generatedHistoryToBeSaved = mutableListOf(),
+            selectedProductivityColor = CalendarColor.default
         )
         _calendarUIState.value.selectedName?.let { onSelectDistinctName(it) }
 
         refresh(context)
+    }
+
+    fun onToggleVisiblilityOfProductivityBottomSheet(){
+        _calendarUIState.value = _calendarUIState.value.copy(isProductivityBottomSheetVisible = !_calendarUIState.value.isProductivityBottomSheetVisible)
+    }
+
+    fun onSelectColor(color: CalendarColor){
+        _calendarUIState.value = _calendarUIState.value.copy(selectedProductivityColor = color)
     }
 }

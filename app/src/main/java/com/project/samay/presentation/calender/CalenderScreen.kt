@@ -32,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,6 +55,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object NavCalenderScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalenderScreen(calendarViewModel: CalendarViewModel) {
     Scaffold { padding ->
@@ -65,7 +67,7 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
             val context = LocalContext.current.applicationContext as SamayApplication
             val selectedCalendarIndex by context.readGoalCalendarFromDataStore(context)
                 .collectAsState(initial = null)
-
+            val productivityLevelSheet = rememberModalBottomSheetState()
             val scope = rememberCoroutineScope()
             val uiState by calendarViewModel.calendarUIState
 
@@ -111,6 +113,7 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                                         }) {
                                         //Saving the selected slots
                                         calendarViewModel.switchVisibilityOfSearchComposable()
+                                        calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
                                     }
                                 }
                             }
@@ -155,6 +158,20 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                         calendarViewModel.approveEvent(context)
                     }
                 }
+            }
+
+            AnimatedVisibility(uiState.isProductivityBottomSheetVisible) {
+                SelectProductivityLevelBottomSheet(
+                    onDismiss = {
+                        calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
+                    },
+                    bottomSheetState = productivityLevelSheet,
+                    selectedColor = uiState.selectedProductivityColor,
+                    onSelect = { color->
+                        calendarViewModel.onSelectColor(color)
+                        calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
+                    }
+                )
             }
         }
     }
