@@ -15,7 +15,7 @@ object Preferences {
     val GOAL_CALENDER_KEY = intPreferencesKey("goal_calender_key")
     fun keyForLevel(level: Int) = stringPreferencesKey("calendar_color_$level")
     val PRODUCTIVITY_LEVELS: List<String> = listOf(
-        "Very Productive",
+        "Interested & Happy",
         "Productive",
         "Neutral",
         "Distracted",
