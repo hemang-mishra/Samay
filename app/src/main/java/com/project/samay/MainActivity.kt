@@ -30,6 +30,7 @@ import androidx.navigation.toRoute
 import com.project.samay.domain.backup.BackupRepo
 import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.repository.BackUpRepository
+import com.project.samay.domain.repository.UsageRepository
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.Destinations
 import com.project.samay.presentation.HomeScreen
@@ -71,13 +72,13 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val usageViewModel by inject<MonitorViewModel>()
-    private val domainViewModel by inject<DomainViewModel>()
-    private val taskViewModel by inject<TaskViewModel>()
+//    private val domainViewModel by inject<DomainViewModel>()
+//    private val taskViewModel by inject<TaskViewModel>()
     private val calendarViewModel by inject<CalendarViewModel>()
-    private val meditateViewModel by inject<MeditateViewModel>()
-    private val historyViewModel by inject<HistoryViewModel>()
+//    private val meditateViewModel by inject<MeditateViewModel>()
+//    private val historyViewModel by inject<HistoryViewModel>()
     private val onboardingViewModel by inject<OnboardingViewModel>()
-    private val settingsViewModel by inject<SettingsViewModel>()
+//    private val settingsViewModel by inject<SettingsViewModel>()
 
     private var isBound by mutableStateOf(false)
     private lateinit var stopwatchService: StopwatchService
@@ -105,7 +106,9 @@ class MainActivity : ComponentActivity() {
         }
         Log.i("check", "On start")
 
-
+        // Check
+        val usageRepository  = UsageRepository(this)
+        usageRepository.getUsageDataOfApps()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,6 +126,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Destinations.OnboardingScreen
                     ) {
                         composable<Destinations.OnboardingScreen> {
+
                             OnboardingScreen(onboardingViewModel, navController)
                         }
                         composable<NavHomeScreen> {
@@ -131,25 +135,21 @@ class MainActivity : ComponentActivity() {
                                 (this@MainActivity.application as SamayApplication).calendarColors = it
                             }
                             HomeScreen(
-                                domainViewModel,
-                                taskViewModel,
-                                calendarViewModel,
-                                usageViewModel,
-                                navController,
-                                stopwatchService
+                                calendarViewModel = calendarViewModel,
+                                monitorViewModel = usageViewModel,
+                                navController = navController,
+                                service = stopwatchService
                             )
                         }
                         composable<NavAddDomainScreen> {
                             val isUpdate = it.toRoute<NavAddDomainScreen>().isUpdate
                             AddDomainScreen(
-                                viewModel = domainViewModel,
                                 isUpdate = isUpdate,
                                 navController = navController
                             )
                         }
                         composable<NavUseDomainScreen> {
                             UseDomainScreen(
-                                viewModel = domainViewModel,
                                 navController = navController
                             )
                         }
@@ -159,7 +159,6 @@ class MainActivity : ComponentActivity() {
                         composable<NavAddTaskScreen> {
                             val isUpdate = it.toRoute<NavAddTaskScreen>().isUpdate
                             AddTaskScreen(
-                                taskViewModel = taskViewModel,
                                 isUpdate = isUpdate,
                                 navController = navController
                             )
@@ -167,7 +166,6 @@ class MainActivity : ComponentActivity() {
 
                         composable<NavUseTaskScreen> {
                             UseTaskScreen(
-                                taskViewModel = taskViewModel,
                                 navController = navController
                             )
                         }
@@ -177,19 +175,18 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<Destinations.MeditationScreen> {
-                            MeditationMusicScreen(meditateViewModel = meditateViewModel)
+                            MeditationMusicScreen()
                         }
 
                         composable<Destinations.SettingsScreen> {
                             SettingsScreen(
                                 monitorViewModel = usageViewModel,
                                 calendarViewModel = calendarViewModel,
-                                settingsViewModel = settingsViewModel
                             )
                         }
 
                         composable<Destinations.HistoryScreen> {
-                            MainHistoryScreen(historyViewModel)
+                            MainHistoryScreen()
                         }
                     }
 

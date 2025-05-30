@@ -65,6 +65,23 @@ class TimeUtils {
             return calendar.timeInMillis
         }
 
+        fun getListOfMillisOfAParticularHourOfLastNDays(hour: Int, days: Int): List<Long> {
+            val currentTimeMillis = System.currentTimeMillis()
+            val millisList = mutableListOf<Long>()
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            calendar.timeInMillis = currentTimeMillis
+
+            for (i in 0 until days) {
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                millisList.add(calendar.timeInMillis)
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+            }
+            return millisList
+        }
+
         fun convertMillisToString(timeInMillis: Long): String {
             val calendar = Calendar.getInstance(TimeZone.getDefault())
             calendar.timeInMillis = timeInMillis

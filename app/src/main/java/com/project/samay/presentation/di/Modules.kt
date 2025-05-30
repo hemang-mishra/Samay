@@ -83,7 +83,7 @@ val appModules = module {
     viewModel { FocusViewModel(get()) }
     viewModel { DomainViewModel(get()) }
     viewModel { TaskViewModel(get()) }
-    viewModel { CalendarViewModel(get(), get(), get(), get()) }
+    viewModel { CalendarViewModel(get(), get(), get(), get(), get()) }
     viewModel { MonitorViewModel(get())}
     viewModel {MeditateViewModel(get())}
     viewModel { BackupScreenViewModel(get())}

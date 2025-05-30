@@ -39,13 +39,14 @@ import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.util.calculations.Logic
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 data class NavAddTaskScreen(val isUpdate: Boolean = false)
 
 
 @Composable
-fun AddTaskScreen(taskViewModel: TaskViewModel, isUpdate: Boolean, navController: NavController) {
+fun AddTaskScreen(taskViewModel: TaskViewModel = koinViewModel<TaskViewModel>(), isUpdate: Boolean, navController: NavController) {
     val context = LocalContext.current.applicationContext as SamayApplication
     val target by context.readTargetFromDataStore(context).collectAsState(initial = DEFAULT_TARGET.toLong())
     val task = if (isUpdate) taskViewModel.uiState.value.currentTask else null

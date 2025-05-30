@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 object NavUseDomainScreen
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UseDomainScreen(viewModel: DomainViewModel, navController: NavController) {
+fun UseDomainScreen(viewModel: DomainViewModel = koinViewModel<DomainViewModel>(), navController: NavController) {
     val context = LocalContext.current
     var currentTime by remember { mutableStateOf("") }
     Scaffold {

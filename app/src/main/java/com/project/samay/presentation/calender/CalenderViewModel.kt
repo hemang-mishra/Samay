@@ -1,6 +1,7 @@
 package com.project.samay.presentation.calender
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import com.project.samay.domain.model.CalendarType
 import com.project.samay.domain.model.DistinctNames
 import com.project.samay.domain.model.HistoryEntity
 import com.project.samay.domain.repository.CalendarRepository
+import com.project.samay.domain.repository.UsageRepository
 import com.project.samay.domain.usecases.CalendarScreenUseCases
 import com.project.samay.domain.usecases.HistoryUseCases
 import com.project.samay.domain.util.CalendarTrackerUtil
@@ -27,7 +29,8 @@ class CalendarViewModel(
     private val calendarRepository: CalendarRepository,
     private val calendarScreenUseCases: CalendarScreenUseCases,
     private val historyRepository: HistoryRepository,
-    private val historyUseCases: HistoryUseCases
+    private val historyUseCases: HistoryUseCases,
+    private val usageRepository: UsageRepository
 ) : ViewModel() {
     private var _calendarsList = mutableStateOf(emptyList<CalendarType>())
     val calendarType: State<List<CalendarType>> = _calendarsList
@@ -174,10 +177,17 @@ class CalendarViewModel(
                         it.name.contains(query, ignoreCase = true)
                     })
             }
+            val histories = historyUseCases.getHistory().first()
             //Reduce size of matching to 6
             if (_calendarUIState.value.matchingNames.size > 6) {
                 _calendarUIState.value = _calendarUIState.value.copy(
-                    matchingNames = _calendarUIState.value.matchingNames.subList(
+                    matchingNames = _calendarUIState.value.matchingNames.sortedWith (
+                        compareByDescending { it: DistinctNames->
+                            histories.count { historyEntity ->
+                                historyEntity.name == it.name && historyEntity.domainName == it.domainName
+                            }
+                        }
+                    ).subList(
                         0,
                         6
                     )
@@ -301,5 +311,30 @@ class CalendarViewModel(
 
     fun onSelectColor(color: CalendarColor){
         _calendarUIState.value = _calendarUIState.value.copy(selectedProductivityColor = color)
+    }
+
+    fun addSleep(context: Context){
+        viewModelScope.launch {
+            val sleepSlots = usageRepository.getUsageDataOfApps()
+            //Checking if the sleep slots are empty
+            val events = calendarRepository.fetchEventsOFLastWeek(context)
+            sleepSlots.forEach { slot ->
+                if (CalendarTrackerUtil.isTimeSlotFree(slot.first, slot.second, events)){
+                    Log.i("CalendarViewModel", "Adding sleep slot: ${TimeUtils.convertMillisToString(slot.first)} to ${TimeUtils.convertMillisToString(slot.second)}")
+                    historyUseCases.useTime(context,
+                    HistoryEntity(
+                        start = slot.first,
+                        end = slot.second,
+                        name = "Sleep",
+                        description = "",
+                        domainEntityId = 404,
+                        domainName = "Unallocated",
+                        productivityColor = CalendarColor.default.color,
+                        hId = 0
+                    )
+                    )
+                }
+            }
+        }
     }
 }

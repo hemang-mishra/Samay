@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,6 +60,25 @@ fun DomainScreen(domainViewModel: DomainViewModel, navController: NavController)
                 itemsIndexed(domains) { _, it ->
                     DomainItem(domain = it, isSelected = uiState.selectedDomain == it, viewModel = domainViewModel, navController = navController){
                         domainViewModel.selectDomain(context = context, it)
+                    }
+                }
+                item{
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Total hours: ${(domains.sumOf { it.timeSpent }/60.0f).toOneDecimalPlace()} hrs", modifier = Modifier.padding(horizontal = 8.dp))
+                }
+                item{
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                item{
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        TextButton(onClick = {
+                            domainViewModel.resetAllDomains()
+                        }) {
+                            Text(
+                                "Reset all domains",
+                                style = TextStyle(fontSize = 16.sp, fontStyle = FontStyle.Italic),
+                            )
+                        }
                     }
                 }
                 item{

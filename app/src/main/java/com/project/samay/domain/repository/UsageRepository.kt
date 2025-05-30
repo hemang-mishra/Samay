@@ -7,6 +7,8 @@
     import android.widget.Toast
     import com.project.samay.domain.model.MonitoredApps
     import com.project.samay.domain.usecases.ONE_SESSION
+    import com.project.samay.domain.util.UsageUtils
+    import com.project.samay.domain.util.UsageUtils.LAST_N_DAYS
     import com.project.samay.util.calculations.Logic
     import com.project.samay.util.calculations.TimeUtils
     import kotlinx.coroutines.flow.Flow
@@ -31,15 +33,38 @@
 
                 while (usageEvents.hasNextEvent()) {
                     usageEvents.getNextEvent(event)
-                    Log.i("UsageRepository", "Event found ${event.packageName} ${TimeUtils.convertMillisToString(event.timeStamp)}")
+//                    Log.i("UsageRepository", "Event found ${event.packageName} ${TimeUtils.convertMillisToString(event.timeStamp)}")
                     if (event.packageName in listOfPackageNames && event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
                         mapUsageVal[MonitoredApps.entries.find { it.packageName == event.packageName }!!] =
                             event.timeStamp
                     }
                 }
-                Log.i("UsageRepository", "Map Usage: ${mapUsageVal.map { it.key to TimeUtils.convertMillisToString(it.value) }}")
+//                Log.i("UsageRepository", "Map Usage: ${mapUsageVal.map { it.key to TimeUtils.convertMillisToString(it.value) }}")
                 emit(mapUsageVal.toMap())
             }
+        }
+
+        fun getUsageDataOfApps(): List<Pair<Long, Long>>{
+            val usageStatsManager =
+                context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val currentTime = System.currentTimeMillis()
+            val usageEvents =
+                usageStatsManager.queryEvents(currentTime - 1000 * 24*LAST_N_DAYS*60*60, currentTime)
+            val listOfPackageNames = MonitoredApps.entries.map { it.packageName }
+            var lastTimeUsed: Long = 0
+
+            val eventList = mutableListOf<UsageEvents.Event>()
+
+            while (usageEvents.hasNextEvent()) {
+                val event = UsageEvents.Event()
+                usageEvents.getNextEvent(event)
+
+                if (event.packageName in listOfPackageNames && event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                    Log.i("UsageRepository", "Event found here... ${event.packageName} ${TimeUtils.convertMillisToString(event.timeStamp)}")
+                    eventList.add(event)
+                }
+            }
+            return UsageUtils.getEmptySleepSlots(eventList)
         }
 
         fun navigateToApp(packageName: String){

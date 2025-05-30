@@ -32,9 +32,10 @@ import com.project.samay.domain.model.HistoryEntity
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.components.TopAppBarGoal
 import com.project.samay.util.calculations.TimeUtils
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainHistoryScreen(historyViewModel: HistoryViewModel) {
+fun MainHistoryScreen(historyViewModel: HistoryViewModel = koinViewModel<HistoryViewModel>()) {
     val uiState by historyViewModel.historyUiState.collectAsState(HistoryScreenUIState())
     val history by uiState.historyItems.collectAsState(initial = emptyList())
     HistoryScreen(history, uiState.selectedHistory, {

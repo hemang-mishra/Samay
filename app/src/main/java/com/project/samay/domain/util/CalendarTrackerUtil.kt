@@ -1,5 +1,6 @@
 package com.project.samay.domain.util
 
+import android.util.Log
 import com.project.samay.domain.model.CalendarEvent
 import com.project.samay.util.calculations.TimeUtils
 
@@ -27,7 +28,7 @@ object CalendarTrackerUtil {
         return mergedSlots
     }
 
-    fun fetchEmptyTimeSlots(events: List<CalendarEvent>, currentTime: Long = System.currentTimeMillis()):List<Pair<Long,Long>> {
+    private fun getEmptySlotsWithoutSplit(events: List<CalendarEvent>, currentTime: Long = System.currentTimeMillis()): List<Pair<Long,Long>>{
         val startRange = currentTime - Preferences.HOURS_TO_BE_TRACKED * 60 * 60 * 1000
         var filteredEvents = removeOutOfRangeEventsFromList(
             startRange = startRange,
@@ -35,7 +36,6 @@ object CalendarTrackerUtil {
             events = events
         )
         filteredEvents = removeLongDurationEventsFromList(events = filteredEvents)
-        val emptySlots = mutableListOf<Pair<Long, Long>>()
         var durationList: List<Pair<Long, Int>> = filteredEvents.map {
             Pair(it.dtstart, START)
         } + filteredEvents.map {
@@ -45,6 +45,7 @@ object CalendarTrackerUtil {
         durationList = durationList + Pair(currentTime, START) + Pair(currentTime, END)
         val sortedList = durationList.sortedBy { it.first + it.second}
         printTheSortedArray(sortedList)
+        val emptySlots = mutableListOf<Pair<Long, Long>>()
         var count = 0
         var prev = 0L
         sortedList.forEach {
@@ -58,11 +59,22 @@ object CalendarTrackerUtil {
             }
             prev = it.first
         }
+        return emptySlots
+    }
+
+    fun fetchEmptyTimeSlots(events: List<CalendarEvent>, currentTime: Long = System.currentTimeMillis()):List<Pair<Long,Long>> {
+        val emptySlots = getEmptySlotsWithoutSplit(events, currentTime)
 
         return splitEmptySlotsIntoDurationGreaterThan(
             Preferences.DURATION_OF_ONE_SLOT_IN_MINUTES,
             emptySlots
         )
+    }
+
+    fun isTimeSlotFree(start: Long, end: Long, events: List<CalendarEvent>, currentTime: Long = System.currentTimeMillis()): Boolean {
+        val emptySlots = getEmptySlotsWithoutSplit(events, currentTime)
+        Log.i("CalendarTrackerUtil", "Empty slots: ${emptySlots.map { "${TimeUtils.convertMillisToString(it.first)} ${TimeUtils.convertMillisToString(it.second)} Result: ${emptySlots.any { it.first <= start && it.second >= end }}" }}")
+        return emptySlots.any { it.first <= start && it.second >= end }
     }
 
     private fun printTheSortedArray(arr: List<Pair<Long,Int>>){

@@ -12,4 +12,5 @@ enum class MonitoredApps(val displayName: String, val packageName: String, val i
     GMAIL("Gmail", "com.google.android.gm", R.drawable.new_10829119),
     CHROME("Chrome", "com.android.chrome", R.drawable.chrome_6125000),
     YTMUSIC("YT Music", "com.google.android.apps.youtube.music", R.drawable.ytmusic),
+    NETLIX("Netflix", "com.netflix.mediaclient", R.drawable.netflix),
 }

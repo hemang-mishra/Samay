@@ -10,6 +10,7 @@ import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.usecases.DomainScreenUseCases
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases) : ViewModel() {
@@ -179,5 +180,21 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases) : 
 
     fun switchVisibilityOfColorPicker() {
         uiState.value = uiState.value.copy(isColorPickerDialogVisible = !uiState.value.isColorPickerDialogVisible)
+    }
+
+    fun resetAllDomains(){
+        viewModelScope.launch {
+            allDomains.first().forEach {dom->
+                domainScreenUseCases.updateDomainDetails(
+                    name = dom.name,
+                    monthlyTarget = dom.monthlyTarget,
+                    description = dom.description,
+                    expectedPercent = dom.expectedPercentage,
+                    oldDomainEntity = dom,
+                    timeSpent = 0L,
+                    color = dom.color
+                )
+            }
+        }
     }
 }

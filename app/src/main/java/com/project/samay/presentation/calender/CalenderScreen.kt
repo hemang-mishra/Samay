@@ -32,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -142,6 +143,18 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                                 }
                             )
                         }
+                    }
+
+                    item{
+                        Spacer(Modifier.height(16.dp))
+                        Box(Modifier.fillMaxWidth()){
+                            TextButton(onClick = {
+                                calendarViewModel.addSleep(context)
+                            }) {
+                                Text("Track sleep")
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
                     }
 
                 }

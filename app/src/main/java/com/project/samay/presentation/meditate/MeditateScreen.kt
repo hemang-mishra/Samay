@@ -36,9 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.project.samay.R
 import com.project.samay.util.calculations.MediaUtil
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MeditationMusicScreen(meditateViewModel: MeditateViewModel) {
+fun MeditationMusicScreen(meditateViewModel: MeditateViewModel = koinViewModel<MeditateViewModel>()) {
     Column(
         modifier = Modifier
             .fillMaxSize()

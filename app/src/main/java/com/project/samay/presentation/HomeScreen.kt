@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.android.gms.tasks.Task
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderScreen
@@ -45,6 +46,7 @@ import com.project.samay.presentation.tasks.TaskViewModel
 import com.project.samay.presentation.tasks.TasksScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon: ImageVector) {
     CALENDAR("Calendar", Icons.Outlined.CalendarToday, Icons.Default.CalendarToday),
@@ -67,10 +69,10 @@ object NavHomeScreen
 
 @Composable
 fun HomeScreen(
-    domainViewModel: DomainViewModel,
-    taskViewModel: TaskViewModel,
-    calendarViewModel: CalendarViewModel,
-    monitorViewModel: MonitorViewModel,
+    domainViewModel: DomainViewModel = koinViewModel<DomainViewModel>(),
+    taskViewModel: TaskViewModel = koinViewModel<TaskViewModel>(),
+    calendarViewModel: CalendarViewModel = koinViewModel<CalendarViewModel>(),
+    monitorViewModel: MonitorViewModel = koinViewModel<MonitorViewModel>(),
     navController: NavHostController,
     service: StopwatchService
 ) {

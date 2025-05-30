@@ -41,6 +41,7 @@ import com.project.samay.SamayApplication
 import com.project.samay.presentation.domains.DividerWithText
 import com.project.samay.util.calculations.TimeUtils
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 import java.time.LocalTime
 
 @Serializable
@@ -48,7 +49,7 @@ object NavUseTaskScreen
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun UseTaskScreen(taskViewModel: TaskViewModel, navController: NavController) {
+fun UseTaskScreen(taskViewModel: TaskViewModel = koinViewModel<TaskViewModel>(), navController: NavController) {
     val context = LocalContext.current.applicationContext
     val target by (context as SamayApplication).readTargetFromDataStore(context).collectAsState(
         initial = 15

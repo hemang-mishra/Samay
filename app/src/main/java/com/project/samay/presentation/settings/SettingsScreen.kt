@@ -37,9 +37,10 @@ import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.ui.theme.spacing
 import com.project.samay.util.ProductivityColors
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: CalendarViewModel, settingsViewModel: SettingsViewModel){
+fun SettingsScreen(monitorViewModel: MonitorViewModel, calendarViewModel: CalendarViewModel, settingsViewModel: SettingsViewModel = koinViewModel<SettingsViewModel>()){
     val calenders by calendarViewModel.calendarType
     val context = LocalContext.current.applicationContext as SamayApplication
     val selectedCalendarIndex by context.readGoalCalendarFromDataStore(context)

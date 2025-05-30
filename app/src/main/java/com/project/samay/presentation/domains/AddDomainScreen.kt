@@ -31,13 +31,14 @@ import androidx.navigation.NavController
 import com.project.samay.presentation.components.ColorItem
 import com.project.samay.presentation.components.ColorPickerDialog
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 
 @Serializable
 data class NavAddDomainScreen(val isUpdate: Boolean = false)
 
 @Composable
-fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController: NavController) {
+fun AddDomainScreen(viewModel: DomainViewModel = koinViewModel<DomainViewModel>(), isUpdate: Boolean, navController: NavController) {
     val uiState by viewModel.uiStateValue
     val domain = if (isUpdate) uiState.selectedDomain else null
     val allDomains by viewModel.allDomains.collectAsState(initial = emptyList())
