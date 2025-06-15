@@ -10,29 +10,19 @@ class BackupUseCases(
     private val historyRepository: HistoryRepository,
     private val domainRepository: DomainRepository
 ) {
-    suspend fun backupDomainsAndHistory(){
-        backupRepository.deleteAllDomainsFromFirebase()
-        backupRepository.deleteAllHistoryFromFirebase()
+    suspend fun exportData(): String? {
         val domains = domainRepository.allDomains.first()
         val history = historyRepository.getAllHistory().first()
-        backupRepository.uploadDomains(domains)
-        backupRepository.uploadHistory(history)
+        val result = backupRepository.exportData(domains, history)
+        return result.data
     }
 
-    suspend fun fetchDomainsAndHistory(){
-        val domains = backupRepository.fetchDomains()
-        val history = backupRepository.fetchHistory()
+    suspend fun importData(json: String) {
+        val result = backupRepository.importData(json)
+        val export = result.data ?: return
         domainRepository.deleteAllDomains()
-        val historyData = historyRepository.deleteAllHistory()
-        domains.data?.let {
-            it.forEach {
-                domainRepository.upsertDomain(it)
-            }
-        }
-        history.data?.let {
-            it.forEach {
-                historyRepository.upsertHistory(it)
-            }
-        }
+        historyRepository.deleteAllHistory()
+        export.domains.forEach { domainRepository.upsertDomain(it) }
+        export.history.forEach { historyRepository.upsertHistory(it) }
     }
 }

@@ -3,7 +3,6 @@ package com.project.samay.presentation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -33,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.android.gms.tasks.Task
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderScreen
@@ -48,19 +46,38 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
-enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon: ImageVector) {
-    CALENDAR("Calendar", Icons.Outlined.CalendarToday, Icons.Default.CalendarToday),
-    APPS("Apps", Icons.Outlined.Apps, Icons.Default.Apps),
-    DOMAINS("Domains", Icons.Outlined.Category, Icons.Default.Category),
+/**
+ * Navigation items for the bottom navigation bar
+ */
+enum class NavItem(
+    val label: String,
+    val notSelectedIcon: ImageVector,
+    val icon: ImageVector
+) {
+    CALENDAR(
+        label = "Calendar",
+        notSelectedIcon = Icons.Outlined.CalendarToday,
+        icon = Icons.Default.CalendarToday
+    ),
+    APPS(
+        label = "Apps",
+        notSelectedIcon = Icons.Outlined.Apps,
+        icon = Icons.Default.Apps
+    ),
+    DOMAINS(
+        label = "Domains",
+        notSelectedIcon = Icons.Outlined.Category,
+        icon = Icons.Default.Category
+    ),
     FOCUS(
-        "Focus",
-        Icons.Outlined.Watch,
-        Icons.Default.Watch,
+        label = "Focus",
+        notSelectedIcon = Icons.Outlined.Watch,
+        icon = Icons.Default.Watch
     ),
     TASKS(
-        "Tasks",
-        Icons.Outlined.Task,
-        Icons.Default.Task,
+        label = "Tasks",
+        notSelectedIcon = Icons.Outlined.Task,
+        icon = Icons.Default.Task
     )
 }
 
@@ -79,55 +96,103 @@ fun HomeScreen(
     val pagerState = rememberPagerState(pageCount = { NavItem.entries.size })
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-        NavigationDrawerContent(navController)
-    }) {
-        Scaffold(bottomBar = {
-            NavigationBar {
-                NavItem.entries.forEachIndexed { index, navItem ->
-                    NavigationBarItem(icon = {
-                        Icon(
-                            imageVector = if (pagerState.currentPage == index) navItem.icon else navItem.notSelectedIcon,
-                            contentDescription = navItem.label
-                        )
-                    },
-                        label = { Text(navItem.label) },
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            scope.launch {
-                                pagerState.scrollToPage(index)
-                            }
-                        })
-                }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            NavigationDrawerContent(navController)
+        }
+    ) {
+        Scaffold(
+            bottomBar = {
+                HomeNavigationBar(
+                    pagerState = pagerState,
+                    onNavigationItemClick = { index ->
+                        scope.launch {
+                            pagerState.scrollToPage(index)
+                        }
+                    }
+                )
             }
-        }) { innerPadding ->
+        ) { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
                 HorizontalPager(
-                    state = pagerState, modifier = Modifier.padding(innerPadding)
+                    state = pagerState,
+                    modifier = Modifier.padding(innerPadding)
                 ) { page ->
                     when (NavItem.entries[page]) {
                         NavItem.DOMAINS -> DomainScreen(
-                            domainViewModel,
+                            domainViewModel = domainViewModel,
                             navController = navController
                         )
-
-                        NavItem.TASKS -> TasksScreen(taskViewModel, navController)
-                        NavItem.CALENDAR -> CalenderScreen(calendarViewModel = calendarViewModel)
-                        NavItem.APPS -> MonitorScreen(monitorViewModel)
-                        NavItem.FOCUS -> FocusScreen(service)
+                        NavItem.TASKS -> TasksScreen(
+                            taskViewModel = taskViewModel,
+                            navController = navController
+                        )
+                        NavItem.CALENDAR -> CalenderScreen(
+                            calendarViewModel = calendarViewModel
+                        )
+                        NavItem.APPS -> MonitorScreen(
+                            viewModel = monitorViewModel
+                        )
+                        NavItem.FOCUS -> FocusScreen(
+                            stopwatchService = service
+                        )
                     }
                 }
 
-                IconButton(modifier = Modifier.padding(start = 4.dp, top = 20.dp),
+                MenuButton(
                     onClick = {
-                    scope.launch {
-                        drawerState.open()
+                        scope.launch {
+                            drawerState.open()
+                        }
                     }
-                }) {
-                    Icon(imageVector = Icons.Default.Menu, contentDescription = null)
-                }
+                )
             }
         }
     }
 }
 
+@Composable
+private fun HomeNavigationBar(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    onNavigationItemClick: (Int) -> Unit
+) {
+    NavigationBar {
+        NavItem.entries.forEachIndexed { index, navItem ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = if (pagerState.currentPage == index) {
+                            navItem.icon
+                        } else {
+                            navItem.notSelectedIcon
+                        },
+                        contentDescription = navItem.label
+                    )
+                },
+                label = { Text(navItem.label) },
+                selected = pagerState.currentPage == index,
+                onClick = { onNavigationItemClick(index) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MenuButton(
+    onClick: () -> Unit
+) {
+    IconButton(
+        modifier = Modifier.padding(
+            start = 4.dp,
+            top = 20.dp
+        ),
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = "Open navigation drawer"
+        )
+    }
+}
