@@ -19,15 +19,72 @@ class SettingsViewModel(
     override fun createUiStateFlow(): StateFlow<SettingsUIState> =
         MutableStateFlow(SettingsUIState())
 
-    fun backupDomainsAndHistory() {
+    fun exportData() {
         viewModelScope.launch {
-            backupUseCases.backupDomainsAndHistory()
+            uiState.emit(uiState.value.copy(isLoading = true, error = null))
+            try {
+                val json = backupUseCases.exportData()
+                uiState.emit(
+                    uiState.value.copy(
+                        exportedJson = json,
+                        isExportDialogVisible = true,
+                        isLoading = false
+                    )
+                )
+            } catch (e: Exception) {
+                uiState.emit(
+                    uiState.value.copy(
+                        error = ResponseError.UNKNOWN.apply { actualResponse = e.message ?: "Export failed" },
+                        isLoading = false
+                    )
+                )
+            }
         }
     }
 
-    fun fetchDomainsAndHistory() {
+    fun importData(json: String) {
         viewModelScope.launch {
-            backupUseCases.fetchDomainsAndHistory()
+            uiState.emit(uiState.value.copy(isLoading = true, error = null))
+            try {
+                backupUseCases.importData(json)
+                uiState.emit(
+                    uiState.value.copy(
+                        isImportDialogVisible = false,
+                        isLoading = false
+                    )
+                )
+            } catch (e: Exception) {
+                uiState.emit(
+                    uiState.value.copy(
+                        error = ResponseError.UNKNOWN.apply { actualResponse = e.message ?: "Import failed" },
+                        isLoading = false
+                    )
+                )
+            }
+        }
+    }
+
+    fun showExportDialog() {
+        viewModelScope.launch {
+            uiState.emit(uiState.value.copy(isExportDialogVisible = true))
+        }
+    }
+
+    fun hideExportDialog() {
+        viewModelScope.launch {
+            uiState.emit(uiState.value.copy(isExportDialogVisible = false))
+        }
+    }
+
+    fun showImportDialog() {
+        viewModelScope.launch {
+            uiState.emit(uiState.value.copy(isImportDialogVisible = true))
+        }
+    }
+
+    fun hideImportDialog() {
+        viewModelScope.launch {
+            uiState.emit(uiState.value.copy(isImportDialogVisible = false))
         }
     }
 
