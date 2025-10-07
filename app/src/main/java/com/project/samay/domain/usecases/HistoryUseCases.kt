@@ -33,6 +33,11 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
         historyRepository.deleteHistory(historyEntity)
     }
 
+    //Delete all history items
+    suspend fun deleteAllHistory(){
+        historyRepository.deleteAllHistory()
+    }
+
     suspend fun useTime(
         context: Context,
         historyEntity: HistoryEntity

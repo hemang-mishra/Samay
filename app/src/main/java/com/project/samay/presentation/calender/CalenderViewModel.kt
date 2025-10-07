@@ -313,28 +313,75 @@ class CalendarViewModel(
         _calendarUIState.value = _calendarUIState.value.copy(selectedProductivityColor = color)
     }
 
-    fun addSleep(context: Context){
+    // Show sleep dialog with detected sleep slots
+    fun showSleepDialog(context: Context) {
         viewModelScope.launch {
             val sleepSlots = usageRepository.getUsageDataOfApps()
-            //Checking if the sleep slots are empty
             val events = calendarRepository.fetchEventsOFLastWeek(context)
-            sleepSlots.forEach { slot ->
-                if (CalendarTrackerUtil.isTimeSlotFree(slot.first, slot.second, events)){
-                    Log.i("CalendarViewModel", "Adding sleep slot: ${TimeUtils.convertMillisToString(slot.first)} to ${TimeUtils.convertMillisToString(slot.second)}")
-                    historyUseCases.useTime(context,
+
+            // Filter to keep only free slots
+            val freeSlots = sleepSlots.filter { slot ->
+                CalendarTrackerUtil.isTimeSlotFree(slot.first, slot.second, events)
+            }
+
+            if (freeSlots.isEmpty()) {
+                Toast.makeText(context, "No sleep patterns detected", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            _calendarUIState.value = _calendarUIState.value.copy(
+                isSleepDialogVisible = true,
+                sleepSlots = freeSlots
+            )
+
+            Log.i("CalendarViewModel", "Sleep slots detected: ${freeSlots.size}")
+        }
+    }
+
+    // Dismiss sleep dialog
+    fun dismissSleepDialog() {
+        _calendarUIState.value = _calendarUIState.value.copy(
+            isSleepDialogVisible = false,
+            sleepSlots = emptyList()
+        )
+    }
+
+    // Save sleep data with selected domain
+    fun saveSleepData(context: Context, domainId: Int, domainName: String, selectedSlots: List<Pair<Long, Long>>, color: CalendarColor) {
+        viewModelScope.launch {
+            if (selectedSlots.isEmpty()) {
+                Toast.makeText(context, "No sleep slots selected", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            Log.i("CalendarViewModel", "Saving ${selectedSlots.size} sleep slots")
+
+            selectedSlots.forEach { slot ->
+                Log.i("CalendarViewModel", "Saving sleep: ${TimeUtils.convertMillisToString(slot.first)} to ${TimeUtils.convertMillisToString(slot.second)}")
+                historyUseCases.useTime(
+                    context,
                     HistoryEntity(
                         start = slot.first,
                         end = slot.second,
                         name = "Sleep",
                         description = "",
-                        domainEntityId = 404,
-                        domainName = "Unallocated",
-                        productivityColor = CalendarColor.default.color,
+                        domainEntityId = domainId,
+                        domainName = domainName,
+                        productivityColor = color.color,
                         hId = 0
                     )
-                    )
-                }
+                )
             }
+
+            // Dismiss dialog and refresh
+            dismissSleepDialog()
+            refresh(context)
+            Toast.makeText(context, "Sleep data saved successfully", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // Legacy method - now just shows the dialog
+    fun addSleep(context: Context) {
+        showSleepDialog(context)
     }
 }

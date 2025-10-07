@@ -10,14 +10,130 @@ import com.project.samay.SamayApplication
 import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.DomainEntity
 import com.project.samay.domain.usecases.DomainScreenUseCases
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
+// Define AddDomainScreenState data class
+data class AddDomainScreenState(
+    val name: String = "",
+    val description: String = "None",
+    val monthlyTarget: String = "None",
+    val expectedPercentage: String = "0",
+    val timeSpent: String = "0",
+    val totalPercentage: Float = 0f,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val domainId: Int? = null
+)
 
 class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases) : ViewModel() {
     val allDomains = domainScreenUseCases.allDomains
     private var uiState = mutableStateOf(DomainUiState())
     val uiStateValue: State<DomainUiState> = uiState
 
+    // Add domain screen state
+    private val _addDomainScreenState = MutableStateFlow(AddDomainScreenState())
+    val addDomainScreenState: StateFlow<AddDomainScreenState> = _addDomainScreenState
+
+    // Initialize or update addDomainScreenState based on domainId
+    fun initializeAddDomainScreen(domainId: Int?, domains: List<DomainEntity>) {
+        viewModelScope.launch {
+            val domain = domains.find { it.id == domainId }
+            _addDomainScreenState.value = AddDomainScreenState(
+                name = domain?.name ?: "",
+                description = domain?.description ?: "None",
+                monthlyTarget = domain?.monthlyTarget ?: "None",
+                expectedPercentage = domain?.expectedPercentage?.toString() ?: "0",
+                timeSpent = domain?.timeSpent?.toString() ?: "0",
+                domainId = domainId
+            )
+
+            // Also update selectedColor in uiState
+            domain?.let {
+                uiState.value = uiState.value.copy(
+                    selectedDomain = domain,
+//                    selectedColor = CalendarColor(domain.color)
+                )
+            }
+
+            calculateTotalPercentage(domains)
+        }
+    }
+
+    // Update functions for each field
+    fun updateName(name: String) {
+        _addDomainScreenState.value = _addDomainScreenState.value.copy(name = name)
+    }
+
+    fun updateDescription(description: String) {
+        _addDomainScreenState.value = _addDomainScreenState.value.copy(description = description)
+    }
+
+    fun updateMonthlyTarget(monthlyTarget: String) {
+        _addDomainScreenState.value = _addDomainScreenState.value.copy(monthlyTarget = monthlyTarget)
+    }
+
+    fun updateExpectedPercentage(percentage: String, domains: List<DomainEntity>) {
+        _addDomainScreenState.value = _addDomainScreenState.value.copy(expectedPercentage = percentage)
+        calculateTotalPercentage(domains)
+    }
+
+    fun updateTimeSpent(timeSpent: String) {
+        _addDomainScreenState.value = _addDomainScreenState.value.copy(timeSpent = timeSpent)
+    }
+
+    private fun calculateTotalPercentage(domains: List<DomainEntity>) {
+        val currentState = _addDomainScreenState.value
+        val expectedPercent = currentState.expectedPercentage.toFloatOrNull() ?: 0f
+        val totalPercent = getTotalExpectedPercentSum(domains, expectedPercent)
+        _addDomainScreenState.value = currentState.copy(totalPercentage = totalPercent)
+    }
+
+    fun saveDomain(context: Context): Boolean {
+        val state = _addDomainScreenState.value
+
+        if (!validateDetails(
+                context,
+                state.name,
+                state.description,
+                state.monthlyTarget,
+                state.expectedPercentage,
+                state.timeSpent
+            )
+        ) {
+            return false
+        }
+
+        viewModelScope.launch {
+            val domainId = state.domainId
+            if (domainId == null) {
+                // Add new domain
+                domainScreenUseCases.insertNewDomain(
+                    name = state.name,
+                    description = state.description,
+                    monthlyTarget = state.monthlyTarget,
+                    expectedPercent = state.expectedPercentage.toFloat(),
+                    timeSpent = state.timeSpent.toLong(),
+                    color = uiState.value.selectedColor.color
+                )
+            } else {
+                // Update existing domain
+                val oldDomain = uiState.value.selectedDomain ?: return@launch
+                domainScreenUseCases.updateDomainDetails(
+                    name = state.name,
+                    description = state.description,
+                    monthlyTarget = state.monthlyTarget,
+                    expectedPercent = state.expectedPercentage.toFloat(),
+                    oldDomainEntity = oldDomain,
+                    timeSpent = state.timeSpent.toLong(),
+                    color = uiState.value.selectedColor.color
+                )
+            }
+        }
+        return true
+    }
 
     fun addTimeInMin(context: Context, timeStr: String): Boolean {
         val time = timeStr.toIntOrNull()
@@ -60,6 +176,7 @@ class DomainViewModel(private val domainScreenUseCases: DomainScreenUseCases) : 
         uiState.value = uiState.value.copy(selectedDomain = domainEntity, selectedColor = (context.applicationContext as SamayApplication).calendarColors.find { it.color == domainEntity.color } ?: CalendarColor.default)
     }
 
+    // Legacy methods kept for compatibility
     fun saveNewDomain(
         context: Context,
         name: String,

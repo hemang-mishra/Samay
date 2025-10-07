@@ -32,4 +32,11 @@ class HistoryViewModel(private val historyUseCases: HistoryUseCases): ViewModel(
             historyUseCases.deleteHistory(historyEntity)
         }
     }
+
+    fun deleteAllHistory(){
+        viewModelScope.launch {
+            historyUiState.value = historyUiState.value.copy(selectedHistory = null)
+            historyUseCases.deleteAllHistory()
+        }
+    }
 }

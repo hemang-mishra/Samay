@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -24,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -37,15 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.project.samay.domain.model.CalendarColor
 import com.project.samay.domain.model.HistoryEntity
-import com.project.samay.presentation.components.BoldItalicText
-import com.project.samay.presentation.components.TopAppBarGoal
 import com.project.samay.util.calculations.TimeUtils
 import org.koin.androidx.compose.koinViewModel
 
@@ -53,11 +48,19 @@ import org.koin.androidx.compose.koinViewModel
 fun MainHistoryScreen(historyViewModel: HistoryViewModel = koinViewModel<HistoryViewModel>()) {
     val uiState by historyViewModel.historyUiState.collectAsState(HistoryScreenUIState())
     val history by uiState.historyItems.collectAsState(initial = emptyList())
-    HistoryScreen(history, uiState.selectedHistory, {
-        historyViewModel.deleteHistory(it)
-    }) {
-        historyViewModel.selectHistory(it)
-    }
+    HistoryScreen(
+        history = history,
+        selectedHistory = uiState.selectedHistory,
+        deleteHistory = {
+            historyViewModel.deleteHistory(it)
+        },
+        deleteAllHistory = {
+            historyViewModel.deleteAllHistory()
+        },
+        onSelectHistory = {
+            historyViewModel.selectHistory(it)
+        }
+    )
 }
 
 @Composable
@@ -65,6 +68,7 @@ private fun HistoryScreen(
     history: List<HistoryEntity>,
     selectedHistory: HistoryEntity?,
     deleteHistory: (HistoryEntity) -> Unit,
+    deleteAllHistory: () -> Unit,
     onSelectHistory: (HistoryEntity) -> Unit
 ) {
     Surface(
@@ -77,7 +81,42 @@ private fun HistoryScreen(
             Column(
                 modifier = Modifier.padding(paddingValues)
             ) {
-                TopAppBarGoal("History")
+                // Custom Top Bar with Delete All option
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .statusBarsPadding()
+                        .shadow(elevation = 2.dp)
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
+                    Text(
+                        text = "History",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    )
+
+                    if (history.isNotEmpty()) {
+                        Surface(
+                            onClick = deleteAllHistory,
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Text(
+                                text = "Delete All",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
 
                 if (history.isEmpty()) {
                     Box(
