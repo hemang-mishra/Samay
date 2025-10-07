@@ -26,6 +26,7 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,7 +67,32 @@ object NavCalenderScreen
 @Composable
 fun CalenderScreen(calendarViewModel: CalendarViewModel) {
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            val uiState by calendarViewModel.calendarUIState
+            if (uiState.selectedEmptySlots.isNotEmpty() && !uiState.isSearchComposableVisible) {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        //Saving the selected slots
+                        calendarViewModel.switchVisibilityOfSearchComposable()
+                        calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.outline_send_24),
+                        contentDescription = "Track slots"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Track ${uiState.selectedEmptySlots.size} slot${if (uiState.selectedEmptySlots.size > 1) "s" else ""}",
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
     ) { padding ->
         Box(
             modifier = Modifier

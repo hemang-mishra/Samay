@@ -67,7 +67,7 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
                 historyEntity.description,
                 historyEntity.start,
                 historyEntity.end,
-                contextApp.calendarColors.find { it.color == domainEntity?.color } ?: CalendarColor.default
+                contextApp.calendarColors.find { it.color == historyEntity.productivityColor } ?: CalendarColor.default
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

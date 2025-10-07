@@ -19,14 +19,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,8 +66,10 @@ fun TimeSlotNote(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Header Section
-            HeaderSection(selectedCount = selectedSlots.size, totalCount = allSlots.size)
+            HeaderSection(
+                selectedCount = selectedSlots.size,
+                totalCount = allSlots.size
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -82,19 +89,17 @@ fun TimeSlotNote(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Action Button
-            ActionButton(
-                selectedCount = selectedSlots.size,
-                onSave = onSave
-            )
+            // Bottom spacing
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
 
 @Composable
-private fun HeaderSection(selectedCount: Int, totalCount: Int) {
+private fun HeaderSection(
+    selectedCount: Int,
+    totalCount: Int
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -146,6 +151,8 @@ private fun HeaderSection(selectedCount: Int, totalCount: Int) {
 
             // Progress Indicator
             ProgressIndicator(selectedCount = selectedCount, totalCount = totalCount)
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -201,8 +208,7 @@ private fun ProgressIndicator(selectedCount: Int, totalCount: Int) {
                             )
                         ),
                         shape = RoundedCornerShape(3.dp)
-                    )
-            )
+                    ))
         }
     }
 }
@@ -360,57 +366,6 @@ fun TimeSlotItem(
     }
 }
 
-@Composable
-private fun ActionButton(selectedCount: Int, onSave: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            if (selectedCount > 0) {
-                Row(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Surface(
-                        modifier = Modifier.size(20.dp),
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primary
-                    ) {
-                        Text(
-                            text = selectedCount.toString(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.padding(2.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "time slots selected",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            PrimaryAppButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onSave,
-                text = if (selectedCount > 0) "Track Selected Slots" else "Track",
-                icon = painterResource(R.drawable.outline_send_24),
-                enabled = selectedCount > 0
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
