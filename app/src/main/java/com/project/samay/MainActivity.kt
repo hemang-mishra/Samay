@@ -142,9 +142,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable<NavAddDomainScreen> {
-                            val isUpdate = it.toRoute<NavAddDomainScreen>().isUpdate
+                            val domainId = it.toRoute<NavAddDomainScreen>().domainId
                             AddDomainScreen(
-                                isUpdate = isUpdate,
+                                domainId = domainId,
                                 navController = navController
                             )
                         }

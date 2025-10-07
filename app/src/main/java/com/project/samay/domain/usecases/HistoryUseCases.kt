@@ -33,6 +33,11 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
         historyRepository.deleteHistory(historyEntity)
     }
 
+    //Delete all history items
+    suspend fun deleteAllHistory(){
+        historyRepository.deleteAllHistory()
+    }
+
     suspend fun useTime(
         context: Context,
         historyEntity: HistoryEntity
@@ -62,7 +67,7 @@ class HistoryUseCases(private val historyRepository: HistoryRepository,
                 historyEntity.description,
                 historyEntity.start,
                 historyEntity.end,
-                contextApp.calendarColors.find { it.color == domainEntity?.color } ?: CalendarColor.default
+                contextApp.calendarColors.find { it.color == historyEntity.productivityColor } ?: CalendarColor.default
             )
         else
             Toast.makeText(context, "Please select calender in settings to add task to calendar", Toast.LENGTH_SHORT).show()

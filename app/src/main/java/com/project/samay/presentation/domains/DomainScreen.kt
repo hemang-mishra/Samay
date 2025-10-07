@@ -104,7 +104,7 @@ fun DomainScreen(domainViewModel: DomainViewModel, navController: NavController)
 
         // Floating Action Button
         FloatingActionButton(
-            onClick = { navController.navigate(NavAddDomainScreen(false)) },
+            onClick = { navController.navigate(NavAddDomainScreen(null)) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -476,7 +476,7 @@ fun ExpandedContent(
             ActionButton(
                 icon = painterResource(R.drawable.outline_edit_24), // Replace with your drawable
                 label = "Edit",
-                onClick = { navController.navigate(NavAddDomainScreen(true)) }
+                onClick = { navController.navigate(NavAddDomainScreen(domain.id)) }
             )
 
             ActionButton(

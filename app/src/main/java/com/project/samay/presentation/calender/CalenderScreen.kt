@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +57,7 @@ import com.project.samay.domain.model.CalendarType
 import com.project.samay.presentation.components.BoldItalicText
 import com.project.samay.presentation.tasks.SelectDomainDialogue
 import com.project.samay.util.calculations.TimeUtils
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -64,7 +67,32 @@ object NavCalenderScreen
 @Composable
 fun CalenderScreen(calendarViewModel: CalendarViewModel) {
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            val uiState by calendarViewModel.calendarUIState
+            if (uiState.selectedEmptySlots.isNotEmpty() && !uiState.isSearchComposableVisible) {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        //Saving the selected slots
+                        calendarViewModel.switchVisibilityOfSearchComposable()
+                        calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.outline_send_24),
+                        contentDescription = "Track slots"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Track ${uiState.selectedEmptySlots.size} slot${if (uiState.selectedEmptySlots.size > 1) "s" else ""}",
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -77,7 +105,7 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
             val productivityLevelSheet = rememberModalBottomSheetState()
             val scope = rememberCoroutineScope()
             val uiState by calendarViewModel.calendarUIState
-
+            val lazyListState = rememberLazyListState()
             val allDomains by calendarViewModel.allDomains.collectAsState(initial = emptyList())
 
             Column(
@@ -99,7 +127,7 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    state = lazyListState
                 ) {
                     item {
                         if (uiState.allEmptySlots.isNotEmpty()) {
@@ -122,9 +150,15 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                                             generatedHistory = uiState.generatedHistoryToBeSaved,
                                             onConfirm = {
                                                 calendarViewModel.onSelectConfirmButton(context)
+                                                scope.launch {
+                                                    lazyListState.animateScrollToItem(0)
+                                                }
                                             },
                                         ) {
                                             calendarViewModel.onSaveInSearchScreen(context)
+                                            scope.launch {
+                                                lazyListState.animateScrollToItem(0)
+                                            }
                                         }
                                     } else {
                                         TimeSlotNote(
@@ -136,8 +170,52 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                                             //Saving the selected slots
                                             calendarViewModel.switchVisibilityOfSearchComposable()
                                             calendarViewModel.onToggleVisiblilityOfProductivityBottomSheet()
+                                            scope.launch {
+                                                lazyListState.animateScrollToItem(0)
+                                            }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+
+
+                    item{
+                        Spacer(Modifier.height(16.dp))
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.outline_sleep_score_24), // Replace with your sleep icon
+                                    contentDescription = "Sleep icon",
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    modifier = Modifier.size(20.dp)
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                TextButton(
+                                    onClick = {
+                                        calendarViewModel.showSleepDialog(context)
+                                    }
+                                ) {
+                                    Text(
+                                        "Track Sleep",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
                                 }
                             }
                         }
@@ -183,48 +261,25 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                             )
                         }
                     }
-
-                    item{
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.outline_sleep_score_24), // Replace with your sleep icon
-                                    contentDescription = "Sleep icon",
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    modifier = Modifier.size(20.dp)
-                                )
-
-                                Spacer(modifier = Modifier.width(8.dp))
-
-                                TextButton(
-                                    onClick = {
-                                        calendarViewModel.addSleep(context)
-                                    }
-                                ) {
-                                    Text(
-                                        "Track Sleep",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
                 }
+            }
+
+            // Sleep tracking dialog
+            if (uiState.isSleepDialogVisible) {
+                SleepTrackingDialog(
+                    sleepSlots = uiState.sleepSlots,
+                    domains = allDomains,
+                    onDismiss = { calendarViewModel.dismissSleepDialog() },
+                    onSave = { domainId, domainName, selectedSleepSlots, color ->
+                        calendarViewModel.saveSleepData(
+                            context,
+                            domainId,
+                            domainName,
+                            selectedSleepSlots,
+                            color
+                        )
+                    }
+                )
             }
 
             AnimatedVisibility(visible = uiState.isDomainDialogueVisible) {

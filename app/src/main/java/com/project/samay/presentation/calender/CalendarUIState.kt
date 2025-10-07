@@ -31,4 +31,8 @@ data class CalendarUIState(
 
     val isProductivityBottomSheetVisible: Boolean = false,
     val selectedProductivityColor: CalendarColor = CalendarColor.default,
+
+    // New fields for sleep tracking dialog
+    val isSleepDialogVisible: Boolean = false,
+    val sleepSlots: List<Pair<Long, Long>> = emptyList()
 )
